@@ -1,0 +1,32 @@
+*.iml
+.gradle
+build/
+.navigation/
+
+# generated files
+bin/
+gen/
+
+#built application files
+*.apk
+*.ap_
+*.aab
+*.aar
+
+# Java class files
+*.class
+
+# Google Services
+#google-services.json
+./app/my-release-key.jks
+/.idea
+./app/build
+./app/release
+./app/.gradle
+captures/
+.DS_Store
+.externalNativeBuild
+*.dex
+output.json
+.cxx
+local.properties
