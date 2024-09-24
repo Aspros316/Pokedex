@@ -67,8 +67,16 @@ dependencies {
     kapt (libs.hilt.android.compiler)
     implementation (libs.hilt.navigation.compose)
 
+    //retrofit
     implementation (libs.retrofit)
     implementation(libs.retrofit.gson)
+
+    //paging3
+    implementation (libs.paging.runtime)
+    implementation (libs.paging.compose)
+
+    //coil
+    implementation (libs.coil)
 
 
     testImplementation(libs.junit)

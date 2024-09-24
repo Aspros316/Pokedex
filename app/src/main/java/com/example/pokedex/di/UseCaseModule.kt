@@ -1,7 +1,7 @@
 package com.example.pokedex.di
 
 import com.example.pokedex.data.source.PokedexRepository
-import com.example.pokedex.domain.GetAllPokemonUseCase
+import com.example.pokedex.domain.list.GetListPokemonUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
   class UseCaseModule {
 
     @Provides
-     fun bindAllPokemonUseCase(remote: PokedexRepository) = GetAllPokemonUseCase(remote)
+     fun bindAllPokemonUseCase(remote: PokedexRepository) = GetListPokemonUseCase(remote)
 
 }
