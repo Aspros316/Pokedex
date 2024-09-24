@@ -18,7 +18,7 @@ class PokedexRepositoryImpl @Inject constructor(
 
     override suspend fun getListPokemon(): Flow<PagingData<Pokemon>> {
         return Pager(
-            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            config = PagingConfig(pageSize = 2, enablePlaceholders = false),
             pagingSourceFactory = {
                 PokedexPagingDataSource(webService)
             }

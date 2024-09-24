@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,21 +24,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
+import com.example.pokedex.R
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.presentation.PokedexViewModel
 import com.example.pokedex.ui.component.Loader
 
 @Composable
-fun PokedexScreen() {
-    val pokedexViewModel = hiltViewModel<PokedexViewModel>()
+fun ListPokemonScreen(pokedexViewModel: PokedexViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { PokemonScreenTopBar() },
@@ -54,7 +57,7 @@ private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Mod
         modifier = modifier
             .fillMaxSize()
     ) {
-        val gamesPage: LazyPagingItems<Pokemon> =
+        val pokemonPage: LazyPagingItems<Pokemon> =
             viewModel.pokemonListState.collectAsLazyPagingItems()
 
         //   Log.i("response","$gamesPage")
@@ -63,31 +66,56 @@ private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Mod
             modifier = Modifier
                 .background(Color(0xFF2B2626))
         ) {
-            items(gamesPage.itemCount) { index ->
-                val item = gamesPage[index]
+            items(pokemonPage.itemCount) { index ->
+                val item = pokemonPage[index]
                 if (item != null) {
                     PokemonCard(item)
                     PokemonText(item)
                 }
             }
-            when (gamesPage.loadState.refresh) {
-                is LoadState.NotLoading -> Unit
-                LoadState.Loading -> {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillParentMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
+
+            pokemonPage.apply {
+                when {
+                    // FIRST LOAD
+                    loadState.refresh is LoadState.Loading -> {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillParentMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Loader()
+                            }
+                        }
+                    }
+
+                    // GOT ERROR ON FIRST LOAD
+                    loadState.refresh is LoadState.Error -> {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillParentMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Loader()
+                            }
+                        }
+                    }
+
+                    // LOADING A NEXT PAGE
+                    loadState.append is LoadState.Loading -> {
+                        item {
                             Loader()
                         }
                     }
-                }
 
-                is LoadState.Error -> {
-                    item {
-                        Text(text = "Error al cargar")
+                    // GOT AN ERROR AFTER LOADING SOME SUBSEQUENT PAGE
+                    loadState.append is LoadState.Error -> {
+                        item {
+                            ErrorState()
+                        }
                     }
                 }
             }
@@ -150,5 +178,26 @@ fun MainImage(image: String) {
             .height(150.dp)
             .fillMaxWidth()
     )
+}
 
+
+@Composable
+fun ErrorState(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(120.dp),
+            painter = painterResource(id = R.drawable.error_icon),
+            contentDescription = null
+        )
+        Text(
+            text = "You got an error!",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 20.dp)
+        )
+    }
 }
