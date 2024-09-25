@@ -28,20 +28,9 @@ class PokedexViewModel @Inject constructor(
     val pokemonListState = _pokemonListState.asStateFlow()
 
 
-    init {
-        onEvent(HomeEvent.GetHome)
-    }
 
-    fun onEvent(event: HomeEvent) {
-        when (event) {
-            is HomeEvent.GetHome -> {
-                getListPokemon()
-            }
-        }
 
-    }
-
-    private fun getListPokemon() {
+     fun getListPokemon() {
         viewModelScope.launch(dispatchers.ioThread) {
             getListPokemonUseCase.execute(Unit)
                 .distinctUntilChanged()

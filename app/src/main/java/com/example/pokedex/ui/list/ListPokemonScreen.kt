@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.list
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,14 +39,30 @@ import com.example.pokedex.R
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.presentation.PokedexViewModel
 import com.example.pokedex.ui.component.Loader
+import com.example.pokedex.ui.composables.NavTopBar
+import com.example.pokedex.ui.composables.PokemonScreenTopBar
+import com.example.pokedex.ui.navigation.ConstantAppScreenName
 
 @Composable
-fun ListPokemonScreen(pokedexViewModel: PokedexViewModel) {
+fun ListPokemonScreen(
+    navController: NavController,
+    pokedexViewModel: PokedexViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { PokemonScreenTopBar() },
+        topBar = {
+            NavTopBar(
+                modifier = Modifier,
+                title = "Pokemon",
+                canNavigateBack = false,
+                navigateUp = {}
+                )
+        },
+
+
     ) { innerPadding ->
-        PokemonContent(
+        ListContent(
+            navController = navController,
             viewModel = pokedexViewModel,
             modifier = Modifier.padding(innerPadding)
         )
@@ -52,7 +70,11 @@ fun ListPokemonScreen(pokedexViewModel: PokedexViewModel) {
 }
 
 @Composable
-private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Modifier) {
+private fun ListContent(
+    navController: NavController,
+    viewModel: PokedexViewModel,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -60,7 +82,9 @@ private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Mod
         val pokemonPage: LazyPagingItems<Pokemon> =
             viewModel.pokemonListState.collectAsLazyPagingItems()
 
-        //   Log.i("response","$gamesPage")
+        LaunchedEffect(key1 = Unit, block = {
+            viewModel.getListPokemon()
+        })
 
         LazyColumn(
             modifier = Modifier
@@ -69,7 +93,7 @@ private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Mod
             items(pokemonPage.itemCount) { index ->
                 val item = pokemonPage[index]
                 if (item != null) {
-                    PokemonCard(item)
+                    PokemonCard(navController, item)
                     PokemonText(item)
                 }
             }
@@ -127,7 +151,7 @@ private fun PokemonContent(viewModel: PokedexViewModel, modifier: Modifier = Mod
 @Composable
 fun PokemonText(pokemon: Pokemon) {
     Text(
-        text = pokemon.name.toString(),
+        text = pokemon.name,
         fontWeight = FontWeight.Black,
         color = Color.White,
         modifier = Modifier.padding(start = 10.dp)
@@ -136,11 +160,14 @@ fun PokemonText(pokemon: Pokemon) {
 
 
 @Composable
-fun PokemonCard(pokemon: Pokemon) {
+fun PokemonCard(navController: NavController,pokemon: Pokemon) {
     Surface(
         modifier = Modifier
             .padding(8.dp),
-        onClick = {},
+        onClick = {
+            Log.i("index", "indice ${pokemon.getUrlNumber()}")
+            navController.navigate(ConstantAppScreenName.DETAIL_SCREEN+ "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
+        },
         shape = RoundedCornerShape(5.dp)
     ) {
         Column(
@@ -152,20 +179,7 @@ fun PokemonCard(pokemon: Pokemon) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PokemonScreenTopBar() {
-    TopAppBar(
-        title = {
-            Text(
-                text = "Pokemon App",
-                textAlign = TextAlign.Center,
-            )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.primaryContainer),
 
-        )
-}
 
 
 @Composable
