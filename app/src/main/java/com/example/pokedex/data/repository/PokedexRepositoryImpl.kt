@@ -3,13 +3,11 @@ package com.example.pokedex.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.pokedex.data.repository.model.RemotePokemon
-import com.example.pokedex.data.repository.model.RemotePokemonTypes
+import com.example.pokedex.data.repository.model.RemoteDetailPokemon
 import com.example.pokedex.data.repository.retrofit.PokedexWebService
 import com.example.pokedex.data.source.PokedexRepository
 import com.example.pokedex.domain.model.Pokemon
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 import javax.inject.Inject
 
 class PokedexRepositoryImpl @Inject constructor(
@@ -24,4 +22,7 @@ class PokedexRepositoryImpl @Inject constructor(
             }
         ).flow
     }
+
+    override suspend fun getPokemonDetail(id: String): RemoteDetailPokemon =
+        webService.getPokemonDetail(id)
 }

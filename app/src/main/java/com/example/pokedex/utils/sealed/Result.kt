@@ -6,3 +6,5 @@ sealed class Result<T> {
     data class OnSuccess<T>(val data: T): Result<T>()
     data class OnError<T>(val throwable: Throwable): Result<T>()
 }
+
+

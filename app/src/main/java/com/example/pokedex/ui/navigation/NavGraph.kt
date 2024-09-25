@@ -17,7 +17,7 @@ import com.example.pokedex.ui.list.ListPokemonScreen
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
     viewModel: PokedexViewModel
-    ) {
+) {
     NavHost(
         navController = navController,
         startDestination = ConstantAppScreenName.LIST_SCREEN,
@@ -30,7 +30,7 @@ fun NavGraph(
             )
         }
 
-        composable(route = ConstantAppScreenName.DETAIL_SCREEN + "/{id}"+"/?{name}",
+        composable(route = ConstantAppScreenName.DETAIL_SCREEN + "/{id}" + "/?{name}",
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
@@ -44,8 +44,13 @@ fun NavGraph(
             }
         ) { backStackEntry ->
             val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
-            val name = backStackEntry.arguments?.getString("name")?: ""
-            DetailPokemonScreen(navigateUp = { navController.navigateUp() }, idPokemon = idPokemon,  name = name)
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            DetailPokemonScreen(
+                viewModel = viewModel,
+                navigateUp = { navController.navigateUp() },
+                idPokemon = idPokemon,
+                name = name
+            )
         }
     }
 }
