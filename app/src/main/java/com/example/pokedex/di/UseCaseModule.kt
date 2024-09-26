@@ -2,6 +2,7 @@ package com.example.pokedex.di
 
 import com.example.pokedex.data.source.PokedexRepository
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
+import com.example.pokedex.domain.detail.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import dagger.Module
 import dagger.Provides
@@ -17,4 +18,7 @@ import dagger.hilt.components.SingletonComponent
 
     @Provides
     fun bindDetailPokemonUseCase(remote: PokedexRepository) = GetPokemonDetailUseCase(remote)
+
+    @Provides
+    fun bindSavePokemonFavoriteUseCase(remote: PokedexRepository) = SavePokemonFavoriteUseCase(remote)
 }

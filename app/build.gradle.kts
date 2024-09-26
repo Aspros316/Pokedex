@@ -81,6 +81,11 @@ dependencies {
     //compose animation
     implementation(libs.navigation.compose)
 
+    // room
+    implementation(libs.room.ktx)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt (libs.room.compiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

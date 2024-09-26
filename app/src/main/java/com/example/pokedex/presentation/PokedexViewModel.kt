@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.pokedex.data.cache.model.PokemonDb
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
+import com.example.pokedex.domain.detail.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Pokemon
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class PokedexViewModel @Inject constructor(
     private val getListPokemonUseCase: GetListPokemonUseCase,
     private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
+    private val savePokemonFavoriteUseCase: SavePokemonFavoriteUseCase,
     private val dispatcher: ExecutionThread,
 
     ) : ViewModel() {
@@ -36,7 +39,11 @@ class PokedexViewModel @Inject constructor(
         MutableStateFlow(Result.OnLoading())
     val detailStateFlow = _detailStateFlow.asStateFlow()
 
-     fun getListPokemon() {
+    private val _saveFavoriteStateFlow: MutableStateFlow<Result<Boolean>> =
+        MutableStateFlow(Result.OnLoading())
+    val saveFavoriteStateFlow = _saveFavoriteStateFlow.asStateFlow()
+
+    fun getListPokemon() {
         viewModelScope.launch(dispatcher.ioThread) {
             getListPokemonUseCase.execute(Unit)
                 .distinctUntilChanged()
@@ -51,9 +58,18 @@ class PokedexViewModel @Inject constructor(
         viewModelScope.launch(dispatcher.ioThread) {
             getPokemonDetailUseCase.execute(id)
                 .map {
-                    Log.i("result", "resultado ${it}")
-                    _detailStateFlow.emit(it) }.stateIn(this)
+                    _detailStateFlow.emit(it)
+                }.stateIn(this)
         }
     }
 
+
+    fun savePokemonFavorite(parameter: PokemonDb) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            savePokemonFavoriteUseCase.execute(parameter)
+                .map {
+                    _saveFavoriteStateFlow.emit(Result.OnSuccess(parameter.isFavorite))
+                }.stateIn(this)
+        }
+    }
 }
