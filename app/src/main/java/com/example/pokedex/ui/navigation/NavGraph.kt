@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokedex.presentation.PokedexViewModel
 import com.example.pokedex.ui.detail.DetailPokemonScreen
+import com.example.pokedex.ui.favorite.FavoritePokemonScreen
 import com.example.pokedex.ui.list.ListPokemonScreen
 
 @Composable
@@ -27,6 +28,7 @@ fun NavGraph(
             ListPokemonScreen(
                 navController = navController,
                 pokedexViewModel = viewModel,
+                favoriteClick = {navController.navigate(ConstantAppScreenName.FAVORITE_SCREEN)}
             )
         }
 
@@ -49,7 +51,15 @@ fun NavGraph(
                 viewModel = viewModel,
                 navigateUp = { navController.navigateUp() },
                 idPokemon = idPokemon,
-                name = name
+                name = name,
+                favoriteClick = {navController.navigate(ConstantAppScreenName.FAVORITE_SCREEN)}
+            )
+        }
+
+        composable(route = ConstantAppScreenName.FAVORITE_SCREEN) {
+            FavoritePokemonScreen(
+                viewModel = viewModel,
+                navigateUp = { navController.navigateUp() }
             )
         }
     }

@@ -3,6 +3,9 @@ package com.example.pokedex.domain.model
 import com.example.pokedex.data.repository.model.RemoteSprites
 
 data class DetailPokemon(
-    val remoteAbilities: List<Abilitie>,
-    val remoteSprites: RemoteSprites,
+    val id: Int,
+    val name: String,
+    val abilities: List<Abilitie>,
+    val sprites: RemoteSprites,
+
 )

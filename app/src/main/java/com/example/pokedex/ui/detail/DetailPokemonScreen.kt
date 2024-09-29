@@ -1,6 +1,5 @@
 package com.example.pokedex.ui.detail
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,28 +27,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
-import com.example.pokedex.data.cache.model.PokemonDb
+import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.domain.model.Abilitie
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.presentation.PokedexViewModel
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.composables.NavTopBar
 import com.example.pokedex.utils.sealed.Result
+import com.example.pokedex.utils.sealed.Result.OnSuccess
 
 @Composable
 fun DetailPokemonScreen(
@@ -57,26 +54,20 @@ fun DetailPokemonScreen(
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
-) {
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
-            viewModel.getPokemonDetail(idPokemon.toString())
-        })
+    favoriteClick: () -> Unit,
 
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val uiState = produceState<Result<DetailPokemon>>(
-        initialValue = Result.OnLoading(),
-        key1 = lifecycle,
-        key2 = viewModel
     ) {
-        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            viewModel.detailStateFlow.collect { value = it }
-        }
-    }
+    LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(idPokemon.toString()) })
 
-    DetailPokemonState(uiState.value, navigateUp,idPokemon, name, viewModel)
+    LaunchedEffect(key1 = idPokemon, block = { viewModel.getPokemonFavorite(idPokemon) })
+
+    val detailUiState = viewModel.detailStateFlow.collectAsStateWithLifecycle()
+
+    val isFavorite = viewModel.favoriteFlow.value?.isFavorite ?: false
+
+    DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite, favoriteClick)
 }
+
 
 @Composable
 fun DetailPokemonState(
@@ -85,7 +76,10 @@ fun DetailPokemonState(
     idPokemon: Int,
     name: String,
     viewModel: PokedexViewModel,
+    isFavorite: Boolean,
+    favoriteClick: () -> Unit,
 ) {
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -93,7 +87,9 @@ fun DetailPokemonState(
                 modifier = Modifier,
                 title = "Pokemon",
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                favoriteClick = favoriteClick
+
             )
         },
     ) { innerPadding ->
@@ -110,13 +106,14 @@ fun DetailPokemonState(
                 }
             }
 
-            is Result.OnSuccess -> {
+            is OnSuccess -> {
                 DetailPokemonContent(
                     value.data,
                     modifier = Modifier.padding(innerPadding),
                     name = name,
                     idPokemon = idPokemon,
-                    viewModel
+                    viewModel,
+                    isFavorite
                 )
             }
 
@@ -133,6 +130,7 @@ fun DetailPokemonContent(
     name: String,
     idPokemon: Int,
     viewModel: PokedexViewModel,
+    isFavorite: Boolean,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,10 +138,10 @@ fun DetailPokemonContent(
         Card(
             modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
         ) {
-            var selected by remember { mutableStateOf(false) }
+            var selected by remember { mutableStateOf(isFavorite) }
 
 
             Row(
@@ -151,26 +149,21 @@ fun DetailPokemonContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 PokemonTitle(name = name, fontsize = 16)
-
                 ToggleHeart(
                     checked = selected,
                     onCheckedChange = { favoriteSelected ->
                         if (favoriteSelected){
-                            viewModel.savePokemonFavorite(PokemonDb(idPokemon, name, false))
-                            Log.i("selected", "${favoriteSelected}")
+                            viewModel.savePokemonFavorite(PokemonTable(idPokemon, name, true, detailPokemon.sprites.frontDefault.toString()))
                         }else {
-                            Log.i("no selected", "${favoriteSelected}")
+                            viewModel.deletePokemonFavorite(idPokemon)
                         }
                         selected = favoriteSelected
                     }
                 )
             }
-
-
-
             DetailPokemonImage(detailPokemon)
         }
-        DisplayListComponent(abilities = detailPokemon.remoteAbilities)
+        DisplayListComponent(abilities = detailPokemon.abilities)
     }
 }
 
@@ -178,7 +171,7 @@ fun DetailPokemonContent(
 fun DetailPokemonImage(detailPokemon: DetailPokemon) {
     Image(
         contentScale = ContentScale.Fit,
-        painter = rememberAsyncImagePainter(detailPokemon.remoteSprites.frontDefault),
+        painter = rememberAsyncImagePainter(detailPokemon.sprites.frontDefault),
         modifier = Modifier
             .fillMaxWidth()
             .size(250.dp),

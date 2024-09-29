@@ -1,13 +1,18 @@
 package com.example.pokedex.presentation
 
-import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.pokedex.data.cache.model.PokemonDb
+import com.example.pokedex.data.cache.model.PokemonTable
+import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
-import com.example.pokedex.domain.detail.SavePokemonFavoriteUseCase
+import com.example.pokedex.domain.favorite.GetAllPokemonFavoriteUseCase
+import com.example.pokedex.domain.favorite.GetPokemonFavoriteUseCase
+import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Pokemon
@@ -27,6 +32,11 @@ class PokedexViewModel @Inject constructor(
     private val getListPokemonUseCase: GetListPokemonUseCase,
     private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
     private val savePokemonFavoriteUseCase: SavePokemonFavoriteUseCase,
+    private val getPokemonFavoriteUseCase: GetPokemonFavoriteUseCase,
+    private val deletePokemonFavoriteUseCase: DeletePokemonFavoriteUseCase,
+    private val getAllPokemonFavoriteUseCase: GetAllPokemonFavoriteUseCase,
+
+
     private val dispatcher: ExecutionThread,
 
     ) : ViewModel() {
@@ -39,9 +49,20 @@ class PokedexViewModel @Inject constructor(
         MutableStateFlow(Result.OnLoading())
     val detailStateFlow = _detailStateFlow.asStateFlow()
 
-    private val _saveFavoriteStateFlow: MutableStateFlow<Result<Boolean>> =
+    private val _getFavoriteStateFlow: MutableStateFlow<Result<PokemonTable>> =
         MutableStateFlow(Result.OnLoading())
-    val saveFavoriteStateFlow = _saveFavoriteStateFlow.asStateFlow()
+    val getFavoriteStateFlow = _getFavoriteStateFlow.asStateFlow()
+
+    private val _savePokemonStateFlow: MutableStateFlow<Result<Any?>> =
+        MutableStateFlow(Result.OnLoading())
+    val savePokemonStateFlow = _savePokemonStateFlow.asStateFlow()
+
+    private val _favoriteFlow = mutableStateOf<PokemonTable?>(null)
+    val favoriteFlow: State<PokemonTable?> = _favoriteFlow
+
+    private val _favoriteAllFlow = mutableStateOf<List<PokemonTable>>(emptyList())
+    val favoriteAllFlow: MutableState<List<PokemonTable>> = _favoriteAllFlow
+
 
     fun getListPokemon() {
         viewModelScope.launch(dispatcher.ioThread) {
@@ -63,13 +84,32 @@ class PokedexViewModel @Inject constructor(
         }
     }
 
-
-    fun savePokemonFavorite(parameter: PokemonDb) {
+    fun savePokemonFavorite(parameter: PokemonTable) {
         viewModelScope.launch(dispatcher.ioThread) {
             savePokemonFavoriteUseCase.execute(parameter)
-                .map {
-                    _saveFavoriteStateFlow.emit(Result.OnSuccess(parameter.isFavorite))
-                }.stateIn(this)
+        }
+    }
+
+    fun getPokemonFavorite(id: Int) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            getPokemonFavoriteUseCase.execute(id).collect{ favorite ->
+                _favoriteFlow.value = favorite
+            }
+        }
+    }
+
+    fun deletePokemonFavorite(pokemonId: Int) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            deletePokemonFavoriteUseCase.execute(pokemonId)
+        }
+    }
+
+    fun getAllPokemonFavorite() {
+        viewModelScope.launch(dispatcher.ioThread) {
+            getAllPokemonFavoriteUseCase.execute().collect{ favorite ->
+                _favoriteAllFlow.value = favorite
+            }
         }
     }
 }
+

@@ -10,4 +10,5 @@ object ConstantAppScreenName {
     const val HOME_SCREEN = "home_screen"
     const val LIST_SCREEN = "list_screen"
     const val DETAIL_SCREEN = "detail_screen"
+    const val FAVORITE_SCREEN = "favorite_screen"
 }

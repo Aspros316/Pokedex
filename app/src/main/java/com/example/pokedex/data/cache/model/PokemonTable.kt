@@ -6,12 +6,14 @@ import androidx.room.PrimaryKey
 import com.example.pokedex.data.cache.database.config.POKEMON_TABLE
 
 @Entity(tableName = POKEMON_TABLE)
-data class PokemonDb(
+data class PokemonTable(
     @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int = 0,
     @ColumnInfo(name = "name")
-    val pokemonId: String,
+    val pokemonName: String,
     @ColumnInfo(name = "favorite")
     val isFavorite: Boolean,
-)
+    @ColumnInfo(name = "image")
+    val image: String,
+    )

@@ -1,8 +1,6 @@
 package com.example.pokedex.di
 
-import com.example.pokedex.data.repository.PokedexRepositoryImpl
 import com.example.pokedex.data.repository.retrofit.PokedexWebService
-import com.example.pokedex.data.source.PokemonCache
 import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.network.ExecutionThreadImpl
 import dagger.Module

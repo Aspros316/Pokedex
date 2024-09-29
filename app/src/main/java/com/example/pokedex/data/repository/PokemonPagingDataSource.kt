@@ -7,7 +7,7 @@ import com.example.pokedex.data.repository.retrofit.PokedexWebService
 import com.example.pokedex.domain.list.mapper.toDomain
 import com.example.pokedex.domain.model.Pokemon
 
-class PokedexPagingDataSource(private val repository: PokedexWebService) :
+class PokemonPagingDataSource(private val repository: PokedexWebService) :
     PagingSource<Int, Pokemon>() {
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

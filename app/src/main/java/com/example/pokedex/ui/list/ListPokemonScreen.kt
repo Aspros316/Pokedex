@@ -37,7 +37,8 @@ import com.example.pokedex.ui.navigation.ConstantAppScreenName
 @Composable
 fun ListPokemonScreen(
     navController: NavController,
-    pokedexViewModel: PokedexViewModel
+    pokedexViewModel: PokedexViewModel,
+    favoriteClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -46,10 +47,10 @@ fun ListPokemonScreen(
                 modifier = Modifier,
                 title = "Pokemon",
                 canNavigateBack = false,
-                navigateUp = {}
+                navigateUp = {},
+                favoriteClick = favoriteClick
                 )
         },
-
 
     ) { innerPadding ->
         ListContent(

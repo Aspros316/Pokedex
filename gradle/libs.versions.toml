@@ -15,6 +15,8 @@ retrofitVersion = "2.11.0"
 pagingVersion = "3.3.2"
 coilVersion = "2.4.0"
 roomVersion = "2.6.1"
+lifecycleRuntimeComposeAndroid = "2.8.6"
+composeMaterial = "1.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +53,8 @@ paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pag
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingVersion" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coilVersion" }
+androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
