@@ -16,6 +16,7 @@ import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Pokemon
+import com.example.pokedex.ui.navigation.PokemonUiEvent
 import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.sealed.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,10 +59,23 @@ class PokedexViewModel @Inject constructor(
     val savePokemonStateFlow = _savePokemonStateFlow.asStateFlow()
 
     private val _favoriteFlow = mutableStateOf<PokemonTable?>(null)
-    val favoriteFlow: State<PokemonTable?> = _favoriteFlow
+    val favoriteFlow: MutableState<PokemonTable?> = _favoriteFlow
 
     private val _favoriteAllFlow = mutableStateOf<List<PokemonTable>>(emptyList())
     val favoriteAllFlow: MutableState<List<PokemonTable>> = _favoriteAllFlow
+
+
+    fun onEvent(event: PokemonUiEvent) {
+        when (event) {
+            PokemonUiEvent.Navigate -> {
+                getListPokemon()
+            }
+
+            is PokemonUiEvent.Paginate -> {
+                getAllPokemonFavorite()
+            }
+        }
+    }
 
 
     fun getListPokemon() {

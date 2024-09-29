@@ -1,4 +1,4 @@
-package com.example.pokedex.ui.composables
+package com.example.pokedex.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

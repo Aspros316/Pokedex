@@ -1,8 +1,14 @@
 package com.example.pokedex.ui.navigation
 
 sealed class AppScreen(val route: String) {
-    object HomeScreen : AppScreen(ConstantAppScreenName.HOME_SCREEN)
+    object ListScreen : AppScreen(ConstantAppScreenName.LIST_SCREEN)
     object DetailsScreen : AppScreen(ConstantAppScreenName.DETAIL_SCREEN)
+    object FavoritesScreen : AppScreen(ConstantAppScreenName.FAVORITE_SCREEN)
+}
+
+sealed interface PokemonUiEvent {
+    data class Paginate(val category: String) : PokemonUiEvent
+    object Navigate : PokemonUiEvent
 }
 
 

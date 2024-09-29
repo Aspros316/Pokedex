@@ -43,8 +43,10 @@ import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.domain.model.Abilitie
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.presentation.PokedexViewModel
+import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.Loader
-import com.example.pokedex.ui.composables.NavTopBar
+import com.example.pokedex.ui.component.NavTopBar
+import com.example.pokedex.ui.component.PokemonDetailTitle
 import com.example.pokedex.utils.sealed.Result
 import com.example.pokedex.utils.sealed.Result.OnSuccess
 
@@ -54,8 +56,6 @@ fun DetailPokemonScreen(
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
-    favoriteClick: () -> Unit,
-
     ) {
     LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(idPokemon.toString()) })
 
@@ -65,7 +65,7 @@ fun DetailPokemonScreen(
 
     val isFavorite = viewModel.favoriteFlow.value?.isFavorite ?: false
 
-    DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite, favoriteClick)
+    DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite)
 }
 
 
@@ -76,8 +76,7 @@ fun DetailPokemonState(
     idPokemon: Int,
     name: String,
     viewModel: PokedexViewModel,
-    isFavorite: Boolean,
-    favoriteClick: () -> Unit,
+    isFavorite: Boolean
 ) {
 
     Scaffold(
@@ -88,7 +87,7 @@ fun DetailPokemonState(
                 title = "Pokemon",
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                favoriteClick = favoriteClick
+                searchClick = {}
 
             )
         },
@@ -148,7 +147,7 @@ fun DetailPokemonContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                PokemonTitle(name = name, fontsize = 16)
+                PokemonDetailTitle(name = name, fontsize = 16)
                 ToggleHeart(
                     checked = selected,
                     onCheckedChange = { favoriteSelected ->
@@ -161,23 +160,13 @@ fun DetailPokemonContent(
                     }
                 )
             }
-            DetailPokemonImage(detailPokemon)
+            DetailPokemonImage(detailPokemon.sprites.frontDefault.toString())
         }
         DisplayListComponent(abilities = detailPokemon.abilities)
     }
 }
 
-@Composable
-fun DetailPokemonImage(detailPokemon: DetailPokemon) {
-    Image(
-        contentScale = ContentScale.Fit,
-        painter = rememberAsyncImagePainter(detailPokemon.sprites.frontDefault),
-        modifier = Modifier
-            .fillMaxWidth()
-            .size(250.dp),
-        contentDescription = "Background Image",
-    )
-}
+
 
 
 @Composable
@@ -228,18 +217,7 @@ fun DisplayListComponent(
 }
 
 
-@Composable
-fun PokemonTitle(name: String, fontsize: Int) {
-    Text(
-        text = name,
-        fontSize = fontsize.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .padding(16.dp)
-            .background(Color.White, RoundedCornerShape(4.dp))
-            .padding(start = 8.dp, end = 8.dp)
-    )
-}
+
 
 @Composable
 fun ToggleHeart(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {

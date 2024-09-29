@@ -23,22 +23,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.presentation.PokedexViewModel
+import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.Loader
-import com.example.pokedex.ui.composables.ErrorState
-import com.example.pokedex.ui.composables.NavTopBar
+import com.example.pokedex.ui.component.ErrorState
+import com.example.pokedex.ui.component.NavTopBar
+import com.example.pokedex.ui.navigation.AppScreen
 import com.example.pokedex.ui.navigation.ConstantAppScreenName
 
 @Composable
 fun ListPokemonScreen(
-    navController: NavController,
-    pokedexViewModel: PokedexViewModel,
-    favoriteClick: () -> Unit,
+    navController: NavHostController,
+    viewModel: PokedexViewModel,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -48,14 +50,21 @@ fun ListPokemonScreen(
                 title = "Pokemon",
                 canNavigateBack = false,
                 navigateUp = {},
-                favoriteClick = favoriteClick
-                )
+                searchClick = {}
+            )
         },
+        bottomBar = {
+            BottomNavigationBar(
+                bottomNavController = navController,
+                onEvent = viewModel::onEvent,
+                selected = 0
+            )
+        }
 
     ) { innerPadding ->
         ListContent(
             navController = navController,
-            viewModel = pokedexViewModel,
+            viewModel = viewModel,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -67,71 +76,67 @@ private fun ListContent(
     viewModel: PokedexViewModel,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    val pokemonPage: LazyPagingItems<Pokemon> =
+        viewModel.pokemonListState.collectAsLazyPagingItems()
+
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getListPokemon()
+    })
+
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .background(Color(0xFF2B2626))
     ) {
-        val pokemonPage: LazyPagingItems<Pokemon> =
-            viewModel.pokemonListState.collectAsLazyPagingItems()
-
-        LaunchedEffect(key1 = Unit, block = {
-            viewModel.getListPokemon()
-        })
-
-        LazyColumn(
-            modifier = Modifier
-                .background(Color(0xFF2B2626))
-        ) {
-            items(pokemonPage.itemCount) { index ->
-                val item = pokemonPage[index]
-                if (item != null) {
-                    PokemonCard(navController, item)
-                    PokemonText(item)
-                }
+        items(pokemonPage.itemCount) { index ->
+            val item = pokemonPage[index]
+            if (item != null) {
+                PokemonCard(navController, item)
+                PokemonText(item)
             }
+        }
 
-            pokemonPage.apply {
-                when {
-                    // FIRST LOAD
-                    loadState.refresh is LoadState.Loading -> {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillParentMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Loader()
-                            }
-                        }
-                    }
-
-                    // GOT ERROR ON FIRST LOAD
-                    loadState.refresh is LoadState.Error -> {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillParentMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Loader()
-                            }
-                        }
-                    }
-
-                    // LOADING A NEXT PAGE
-                    loadState.append is LoadState.Loading -> {
-                        item {
+        pokemonPage.apply {
+            when {
+                // FIRST LOAD
+                loadState.refresh is LoadState.Loading -> {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillParentMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Loader()
                         }
                     }
+                }
 
-                    // GOT AN ERROR AFTER LOADING SOME SUBSEQUENT PAGE
-                    loadState.append is LoadState.Error -> {
-                        item {
-                            ErrorState()
+                // GOT ERROR ON FIRST LOAD
+                loadState.refresh is LoadState.Error -> {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillParentMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Loader()
                         }
+                    }
+                }
+
+                // LOADING A NEXT PAGE
+                loadState.append is LoadState.Loading -> {
+                    item {
+                        Loader()
+                    }
+                }
+
+                // GOT AN ERROR AFTER LOADING SOME SUBSEQUENT PAGE
+                loadState.append is LoadState.Error -> {
+                    item {
+                        ErrorState()
                     }
                 }
             }
@@ -152,13 +157,13 @@ fun PokemonText(pokemon: Pokemon) {
 
 
 @Composable
-fun PokemonCard(navController: NavController,pokemon: Pokemon) {
+fun PokemonCard(navController: NavController, pokemon: Pokemon) {
     Surface(
         modifier = Modifier
             .padding(8.dp),
         onClick = {
             Log.i("index", "indice ${pokemon.getUrlNumber()}")
-            navController.navigate(ConstantAppScreenName.DETAIL_SCREEN+ "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
+            navController.navigate(AppScreen.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
         },
         shape = RoundedCornerShape(5.dp)
     ) {

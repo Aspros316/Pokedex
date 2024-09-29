@@ -21,18 +21,18 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = ConstantAppScreenName.LIST_SCREEN,
+        startDestination = AppScreen.ListScreen.route,
     ) {
 
-        composable(route = ConstantAppScreenName.LIST_SCREEN) {
+        composable(route = AppScreen.ListScreen.route) {
             ListPokemonScreen(
                 navController = navController,
-                pokedexViewModel = viewModel,
-                favoriteClick = {navController.navigate(ConstantAppScreenName.FAVORITE_SCREEN)}
+                viewModel = viewModel
+
             )
         }
 
-        composable(route = ConstantAppScreenName.DETAIL_SCREEN + "/{id}" + "/?{name}",
+        composable(route = AppScreen.DetailsScreen.route + "/{id}" + "/?{name}",
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
@@ -52,14 +52,14 @@ fun NavGraph(
                 navigateUp = { navController.navigateUp() },
                 idPokemon = idPokemon,
                 name = name,
-                favoriteClick = {navController.navigate(ConstantAppScreenName.FAVORITE_SCREEN)}
             )
         }
 
         composable(route = ConstantAppScreenName.FAVORITE_SCREEN) {
             FavoritePokemonScreen(
                 viewModel = viewModel,
-                navigateUp = { navController.navigateUp() }
+                navController = navController
+
             )
         }
     }
