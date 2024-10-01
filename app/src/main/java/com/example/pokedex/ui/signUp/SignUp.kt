@@ -37,8 +37,8 @@ fun SignIn(
     signInRequest: (SignUpCredentials) -> Unit,
 ) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var userInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -70,14 +70,14 @@ fun SignIn(
             )
 
             PokemonTextField(
-                value = email,
-                hint = "Email",
+                value = userInput,
+                hint = "Usuario",
                 isError = false,
                 errorText = "",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-            ) { email = it }
+            ) { userInput = it }
 
             Spacer(
                 modifier = Modifier
@@ -85,14 +85,14 @@ fun SignIn(
             )
 
             PasswordTextField(
-                value = password,
+                value = passwordInput,
                 hint = "Contraseña",
                 isError = false,
                 errorText = "",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-            ) { password = it }
+            ) { passwordInput = it }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -101,13 +101,13 @@ fun SignIn(
                     .padding(bottom = 16.dp)
             ) {
                 PokemonButton(
+                    isEnable = if (userInput.isNotEmpty() && passwordInput.isNotEmpty()) true else false,
                     onClick = {
                         signInRequest(
-                            SignUpCredentials(email, password, true)
+                            SignUpCredentials(userInput, passwordInput, true)
                         )
                     },
                     txtButton = "Iniciar sesión",
-                    isEnable = true,
                     modifier = Modifier
                         .height(48.dp)
                         .fillMaxWidth()
