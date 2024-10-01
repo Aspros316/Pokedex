@@ -3,11 +3,11 @@ package com.example.pokedex.data.repository
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.pokedex.data.repository.retrofit.PokedexWebService
+import com.example.pokedex.data.repository.retrofit.PokemonWebService
 import com.example.pokedex.domain.list.mapper.toDomain
 import com.example.pokedex.domain.model.Pokemon
 
-class PokemonPagingDataSource(private val repository: PokedexWebService) :
+class PokemonPagingDataSource(private val repository: PokemonWebService) :
     PagingSource<Int, Pokemon>() {
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

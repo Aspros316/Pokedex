@@ -1,6 +1,5 @@
 package com.example.pokedex.ui.detail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -32,17 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.domain.model.Abilitie
 import com.example.pokedex.domain.model.DetailPokemon
-import com.example.pokedex.presentation.PokedexViewModel
+import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.NavTopBar
@@ -52,10 +47,11 @@ import com.example.pokedex.utils.sealed.Result.OnSuccess
 
 @Composable
 fun DetailPokemonScreen(
-    viewModel: PokedexViewModel,
+    viewModel: PokemonViewModel,
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
+    logoutClick: () -> Unit,
     ) {
     LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(idPokemon.toString()) })
 
@@ -63,9 +59,9 @@ fun DetailPokemonScreen(
 
     val detailUiState = viewModel.detailStateFlow.collectAsStateWithLifecycle()
 
-    val isFavorite = viewModel.favoriteFlow.value?.isFavorite ?: false
+    val isFavorite = viewModel.getFavoriteFlow.value?.isFavorite ?: false
 
-    DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite)
+    DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite, logoutClick)
 }
 
 
@@ -75,9 +71,10 @@ fun DetailPokemonState(
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
-    viewModel: PokedexViewModel,
-    isFavorite: Boolean
-) {
+    viewModel: PokemonViewModel,
+    isFavorite: Boolean,
+    logoutClick: () -> Unit,
+    ) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -87,7 +84,7 @@ fun DetailPokemonState(
                 title = "Pokemon",
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                searchClick = {}
+                logoutClick = {logoutClick()}
 
             )
         },
@@ -128,7 +125,7 @@ fun DetailPokemonContent(
     modifier: Modifier,
     name: String,
     idPokemon: Int,
-    viewModel: PokedexViewModel,
+    viewModel: PokemonViewModel,
     isFavorite: Boolean,
 ) {
     Column(

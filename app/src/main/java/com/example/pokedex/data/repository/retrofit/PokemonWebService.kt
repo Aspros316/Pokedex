@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface PokedexWebService {
+interface PokemonWebService {
 
     @GET("api/v2/pokemon")
     suspend fun getAllPokemon(

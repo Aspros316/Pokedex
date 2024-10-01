@@ -1,7 +1,6 @@
 package com.example.pokedex.presentation
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +15,10 @@ import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Pokemon
+import com.example.pokedex.domain.signUp.ClearDatastoreUseCase
+import com.example.pokedex.domain.signUp.GetPokemonSignUpUseCase
+import com.example.pokedex.domain.signUp.SavePokemonSignUpUseCase
+import com.example.pokedex.ui.model.SignUpCredentials
 import com.example.pokedex.ui.navigation.PokemonUiEvent
 import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.sealed.Result
@@ -29,15 +32,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PokedexViewModel @Inject constructor(
+class PokemonViewModel @Inject constructor(
     private val getListPokemonUseCase: GetListPokemonUseCase,
     private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
     private val savePokemonFavoriteUseCase: SavePokemonFavoriteUseCase,
     private val getPokemonFavoriteUseCase: GetPokemonFavoriteUseCase,
     private val deletePokemonFavoriteUseCase: DeletePokemonFavoriteUseCase,
     private val getAllPokemonFavoriteUseCase: GetAllPokemonFavoriteUseCase,
-
-
+    private val savePokemonSignUpUseCase: SavePokemonSignUpUseCase,
+    private val getPokemonSignUpUseCase: GetPokemonSignUpUseCase,
+    private val clearDatastoreUseCase: ClearDatastoreUseCase,
     private val dispatcher: ExecutionThread,
 
     ) : ViewModel() {
@@ -50,20 +54,19 @@ class PokedexViewModel @Inject constructor(
         MutableStateFlow(Result.OnLoading())
     val detailStateFlow = _detailStateFlow.asStateFlow()
 
-    private val _getFavoriteStateFlow: MutableStateFlow<Result<PokemonTable>> =
-        MutableStateFlow(Result.OnLoading())
-    val getFavoriteStateFlow = _getFavoriteStateFlow.asStateFlow()
-
-    private val _savePokemonStateFlow: MutableStateFlow<Result<Any?>> =
-        MutableStateFlow(Result.OnLoading())
-    val savePokemonStateFlow = _savePokemonStateFlow.asStateFlow()
-
-    private val _favoriteFlow = mutableStateOf<PokemonTable?>(null)
-    val favoriteFlow: MutableState<PokemonTable?> = _favoriteFlow
+    private val _getFavoriteFlow = mutableStateOf<PokemonTable?>(null)
+    val getFavoriteFlow: MutableState<PokemonTable?> = _getFavoriteFlow
 
     private val _favoriteAllFlow = mutableStateOf<List<PokemonTable>>(emptyList())
     val favoriteAllFlow: MutableState<List<PokemonTable>> = _favoriteAllFlow
 
+    private val _getSignUpFlow = mutableStateOf(SignUpCredentials())
+    val getSignUpFlow: MutableState<SignUpCredentials> = _getSignUpFlow
+
+
+    init {
+        getSignUp()
+    }
 
     fun onEvent(event: PokemonUiEvent) {
         when (event) {
@@ -107,7 +110,7 @@ class PokedexViewModel @Inject constructor(
     fun getPokemonFavorite(id: Int) {
         viewModelScope.launch(dispatcher.ioThread) {
             getPokemonFavoriteUseCase.execute(id).collect{ favorite ->
-                _favoriteFlow.value = favorite
+                _getFavoriteFlow.value = favorite
             }
         }
     }
@@ -125,5 +128,26 @@ class PokedexViewModel @Inject constructor(
             }
         }
     }
+
+    fun saveSignUp(parameter: SignUpCredentials) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            savePokemonSignUpUseCase.execute(parameter)
+        }
+    }
+
+    fun getSignUp() {
+        viewModelScope.launch(dispatcher.ioThread) {
+            getPokemonSignUpUseCase.execute(null).map{ credentials ->
+                _getSignUpFlow.value = credentials
+            }.stateIn(this)
+        }
+    }
+
+    fun clearDatastore(){
+        viewModelScope.launch(dispatcher.ioThread) {
+            clearDatastoreUseCase.execute()
+        }
+    }
+
 }
 

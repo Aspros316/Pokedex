@@ -1,6 +1,6 @@
 package com.example.pokedex.di
 
-import com.example.pokedex.data.repository.retrofit.PokedexWebService
+import com.example.pokedex.data.repository.retrofit.PokemonWebService
 import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.network.ExecutionThreadImpl
 import dagger.Module
@@ -21,7 +21,7 @@ class NetWorkModule {
 
 
     @Provides
-    fun provideApiService(retrofit: Retrofit): PokedexWebService = retrofit.create(PokedexWebService::class.java)
+    fun provideApiService(retrofit: Retrofit): PokemonWebService = retrofit.create(PokemonWebService::class.java)
 
     @Provides
     fun provideRetrofit(): Retrofit = Retrofit.Builder()

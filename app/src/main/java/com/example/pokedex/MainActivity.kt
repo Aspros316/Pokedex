@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.pokedex.presentation.PokedexViewModel
+import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.navigation.NavGraph
 import com.example.pokedex.ui.theme.PokedexTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PokedexTheme {
-                val viewModel = hiltViewModel<PokedexViewModel>()
+                val viewModel = hiltViewModel<PokemonViewModel>()
                 val navController = rememberNavController()
                 NavGraph(navController, viewModel)
             }

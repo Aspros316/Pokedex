@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.example.pokedex.data.cache.PokemonCacheImpl
 import com.example.pokedex.data.cache.database.PokemonDatabase
 import com.example.pokedex.data.cache.database.config.POKEMON_TABLE
-import com.example.pokedex.data.source.PokemonDb
+import com.example.pokedex.data.source.PokemonCache
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -18,7 +18,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class CacheModule {
 
     @Binds
-    abstract fun bindPokemonCache(cache: PokemonCacheImpl): PokemonDb
+    abstract fun bindPokemonCache(cache: PokemonCacheImpl): PokemonCache
 
     companion object {
 

@@ -62,6 +62,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.material.icons.extended)
+
+    //datastore
+    implementation (libs.datastore)
+    implementation (libs.datastore.core)
 
     //hilt
     implementation (libs.hilt.android)

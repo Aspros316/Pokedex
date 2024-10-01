@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,18 +28,18 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.domain.model.Pokemon
-import com.example.pokedex.presentation.PokedexViewModel
+import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.ErrorState
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.navigation.AppScreen
-import com.example.pokedex.ui.navigation.ConstantAppScreenName
 
 @Composable
 fun ListPokemonScreen(
     navController: NavHostController,
-    viewModel: PokedexViewModel,
+    viewModel: PokemonViewModel,
+    logoutClick: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +49,7 @@ fun ListPokemonScreen(
                 title = "Pokemon",
                 canNavigateBack = false,
                 navigateUp = {},
-                searchClick = {}
+                logoutClick = {logoutClick()}
             )
         },
         bottomBar = {
@@ -73,7 +72,7 @@ fun ListPokemonScreen(
 @Composable
 private fun ListContent(
     navController: NavController,
-    viewModel: PokedexViewModel,
+    viewModel: PokemonViewModel,
     modifier: Modifier = Modifier
 ) {
     val pokemonPage: LazyPagingItems<Pokemon> =

@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.component
 
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -19,8 +20,7 @@ fun NavTopBar(
     title: String,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
-    searchClick: () -> Unit,
-    actions: @Composable () -> Unit = {}
+    logoutClick: () -> Unit,
 ) {
     if (canNavigateBack) {
         TopAppBar(
@@ -36,12 +36,7 @@ fun NavTopBar(
                 }
             },
             actions = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = null
-                    )
-                }
+                TopAppBarDropdownMenu(logoutClick)
             },
             modifier = modifier
         )
@@ -51,13 +46,11 @@ fun NavTopBar(
                 Text(text = title)
             },
             actions = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = null
-                    )
-                }
+
+                TopAppBarDropdownMenu(logoutClick)
             },
+
+
             modifier = modifier
         )
     }
