@@ -119,7 +119,7 @@ fun SignIn(
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             ) {
-                Row(
+/*                Row(
                     modifier = Modifier
                         .padding(
                             top = 16.dp,
@@ -142,7 +142,7 @@ fun SignIn(
                             },
                         font = 19
                     )
-                }
+                }*/
             }
         }
     }
