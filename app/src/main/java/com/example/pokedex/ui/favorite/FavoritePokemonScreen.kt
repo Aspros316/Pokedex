@@ -43,8 +43,6 @@ fun FavoritePokemonScreen(
     viewModel: PokemonViewModel,
     logoutClick: () -> Unit,
     ) {
-    val bodyContent = remember { mutableStateOf("Select menu to change content") }
-    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
