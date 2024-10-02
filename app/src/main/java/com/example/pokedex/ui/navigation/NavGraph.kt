@@ -52,6 +52,9 @@ fun NavGraph(
         composable(route = AppScreen.ListScreen.route) {
             ListPokemonScreen(
                 navController = navController,
+                navToDetail = { pokemon ->
+                    navController.navigate(AppScreen.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
+                },
                 viewModel = viewModel,
                 logoutClick = {
                     viewModel.clearDatastore()

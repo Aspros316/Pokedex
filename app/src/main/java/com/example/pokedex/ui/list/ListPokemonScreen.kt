@@ -38,6 +38,7 @@ import com.example.pokedex.ui.navigation.AppScreen
 @Composable
 fun ListPokemonScreen(
     navController: NavHostController,
+    navToDetail: (Pokemon)-> Unit,
     viewModel: PokemonViewModel,
     logoutClick: () -> Unit,
 ) {
@@ -62,7 +63,7 @@ fun ListPokemonScreen(
 
     ) { innerPadding ->
         ListContent(
-            navController = navController,
+            navToDetail = navToDetail,
             viewModel = viewModel,
             modifier = Modifier.padding(innerPadding)
         )
@@ -71,7 +72,7 @@ fun ListPokemonScreen(
 
 @Composable
 private fun ListContent(
-    navController: NavController,
+    navToDetail: (Pokemon)-> Unit,
     viewModel: PokemonViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -90,7 +91,7 @@ private fun ListContent(
         items(pokemonPage.itemCount) { index ->
             val item = pokemonPage[index]
             if (item != null) {
-                PokemonCard(navController, item)
+                PokemonCard(navToDetail, item)
                 PokemonText(item)
             }
         }
@@ -156,13 +157,12 @@ fun PokemonText(pokemon: Pokemon) {
 
 
 @Composable
-fun PokemonCard(navController: NavController, pokemon: Pokemon) {
+fun PokemonCard(navToDetail: (Pokemon)-> Unit, pokemon: Pokemon) {
     Surface(
         modifier = Modifier
             .padding(8.dp),
         onClick = {
-            Log.i("index", "indice ${pokemon.getUrlNumber()}")
-            navController.navigate(AppScreen.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
+            navToDetail(pokemon)
         },
         shape = RoundedCornerShape(5.dp)
     ) {
