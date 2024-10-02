@@ -9,7 +9,7 @@ import javax.inject.Inject
 class PokemonDataStoreBuilder @Inject constructor(context: Context) {
 
     companion object {
-        const val NAME = "DigitalCollectionDataStore"
+        const val NAME = "PokemonDataStore"
 
         val Context.datastore: DataStore<Preferences> by preferencesDataStore(
             name = NAME
