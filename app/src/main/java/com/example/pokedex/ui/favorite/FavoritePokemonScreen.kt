@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokedex.R
 import com.example.pokedex.data.cache.model.PokemonTable
@@ -43,6 +44,8 @@ fun FavoritePokemonScreen(
     viewModel: PokemonViewModel,
     logoutClick: () -> Unit,
     ) {
+    LaunchedEffect(key1 = Unit, block = { viewModel.getAllPokemonFavorite() })
+    val favoriteList = viewModel.favoriteAllFlow.collectAsStateWithLifecycle().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -63,10 +66,6 @@ fun FavoritePokemonScreen(
             )
         }
     ) { innerPadding ->
-        LaunchedEffect(key1 = Unit, block = { viewModel.getAllPokemonFavorite() })
-
-        val favoriteList = viewModel.favoriteAllFlow.value
-
         FavoritePokemonContent(Modifier.padding(innerPadding), favoriteList)
     }
 }
@@ -97,10 +96,7 @@ fun FavoritePokemonContent(
 
                 }
                 DetailPokemonImage(favorite.image)
-
-
             }
-
         }
     }
 

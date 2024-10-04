@@ -59,7 +59,7 @@ fun DetailPokemonScreen(
 
     val detailUiState = viewModel.detailStateFlow.collectAsStateWithLifecycle()
 
-    val isFavorite = viewModel.getFavoriteFlow.value?.isFavorite ?: false
+    val isFavorite = viewModel.getFavoriteFlow.collectAsStateWithLifecycle().value?.isFavorite ?: false
 
     DetailPokemonState(detailUiState.value, navigateUp,idPokemon, name, viewModel, isFavorite, logoutClick)
 }

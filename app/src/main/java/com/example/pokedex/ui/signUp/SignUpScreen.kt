@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.NavTopBar
@@ -26,7 +27,8 @@ fun SignUpScreen(
     signInRequest: (SignUpCredentials) -> Unit,
 ) {
 
-    val credentials = viewModel.getSignUpFlow.value
+    val credentials = viewModel.getSignUpFlow.collectAsStateWithLifecycle().value
+
     println("credentials ${credentials}")
     if (credentials.isValid) {
         navController.navigate(AppScreen.ListScreen.route)

@@ -54,15 +54,17 @@ class PokemonViewModel @Inject constructor(
         MutableStateFlow(Result.OnLoading())
     val detailStateFlow = _detailStateFlow.asStateFlow()
 
-    private val _getFavoriteFlow = mutableStateOf<PokemonTable?>(null)
-    val getFavoriteFlow: MutableState<PokemonTable?> = _getFavoriteFlow
+    private val _getFavoriteFlow: MutableStateFlow<PokemonTable?> =
+        MutableStateFlow(null)
+    val getFavoriteFlow = _getFavoriteFlow.asStateFlow()
 
-    private val _favoriteAllFlow = mutableStateOf<List<PokemonTable>>(emptyList())
-    val favoriteAllFlow: MutableState<List<PokemonTable>> = _favoriteAllFlow
+    private val _favoriteAllFlow : MutableStateFlow<List<PokemonTable>> =
+        MutableStateFlow(emptyList())
+    val favoriteAllFlow = _favoriteAllFlow.asStateFlow()
 
-    private val _getSignUpFlow = mutableStateOf(SignUpCredentials())
-    val getSignUpFlow: MutableState<SignUpCredentials> = _getSignUpFlow
-
+    private val _getSignUpFlow : MutableStateFlow<SignUpCredentials> =
+        MutableStateFlow(SignUpCredentials())
+    val getSignUpFlow = _getSignUpFlow.asStateFlow()
 
     init {
         getSignUp()
