@@ -42,9 +42,8 @@ class PokemonViewModel @Inject constructor(
     private val savePokemonSignUpUseCase: SavePokemonSignUpUseCase,
     private val getPokemonSignUpUseCase: GetPokemonSignUpUseCase,
     private val clearDatastoreUseCase: ClearDatastoreUseCase,
-    private val dispatcher: ExecutionThread,
-
-    ) : ViewModel() {
+    private val dispatcher: ExecutionThread
+) : ViewModel() {
 
     private val _pokemonListState: MutableStateFlow<PagingData<Pokemon>> =
         MutableStateFlow(value = PagingData.empty())
@@ -58,11 +57,11 @@ class PokemonViewModel @Inject constructor(
         MutableStateFlow(null)
     val getFavoriteFlow = _getFavoriteFlow.asStateFlow()
 
-    private val _favoriteAllFlow : MutableStateFlow<List<PokemonTable>> =
+    private val _favoriteAllFlow: MutableStateFlow<List<PokemonTable>> =
         MutableStateFlow(emptyList())
     val favoriteAllFlow = _favoriteAllFlow.asStateFlow()
 
-    private val _getSignUpFlow : MutableStateFlow<SignUpCredentials> =
+    private val _getSignUpFlow: MutableStateFlow<SignUpCredentials> =
         MutableStateFlow(SignUpCredentials())
     val getSignUpFlow = _getSignUpFlow.asStateFlow()
 
@@ -89,6 +88,7 @@ class PokemonViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .cachedIn(viewModelScope)
                 .map {
+                    println("viewmodelValue ${it}")
                     _pokemonListState.value = it
                 }.stateIn(this)
         }
@@ -111,7 +111,7 @@ class PokemonViewModel @Inject constructor(
 
     fun getPokemonFavorite(id: Int) {
         viewModelScope.launch(dispatcher.ioThread) {
-            getPokemonFavoriteUseCase.execute(id).collect{ favorite ->
+            getPokemonFavoriteUseCase.execute(id).collect { favorite ->
                 _getFavoriteFlow.value = favorite
             }
         }
@@ -125,7 +125,7 @@ class PokemonViewModel @Inject constructor(
 
     fun getAllPokemonFavorite() {
         viewModelScope.launch(dispatcher.ioThread) {
-            getAllPokemonFavoriteUseCase.execute().collect{ favorite ->
+            getAllPokemonFavoriteUseCase.execute().collect { favorite ->
                 _favoriteAllFlow.value = favorite
             }
         }
@@ -139,13 +139,13 @@ class PokemonViewModel @Inject constructor(
 
     fun getSignUp() {
         viewModelScope.launch(dispatcher.ioThread) {
-            getPokemonSignUpUseCase.execute(null).map{ credentials ->
+            getPokemonSignUpUseCase.execute(null).map { credentials ->
                 _getSignUpFlow.value = credentials
             }.stateIn(this)
         }
     }
 
-    fun clearDatastore(){
+    fun clearDatastore() {
         viewModelScope.launch(dispatcher.ioThread) {
             clearDatastoreUseCase.execute()
         }

@@ -19,6 +19,8 @@ lifecycleRuntimeComposeAndroid = "2.8.6"
 composeMaterial = "1.4.0"
 material-icons-extended = "1.6.7"
 datastoreVersion = "1.1.1"
+apollo-version = "4.0.0"
+okhttpVersion = "4.12.0"
 
 
 [libraries]
@@ -40,6 +42,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "material-icons-extended" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpVersion" }
 
 
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreVersion" }
@@ -54,6 +57,9 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
+
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo-version"}
+
 
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
@@ -71,5 +77,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 hilt-application = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo-version" }
 
 

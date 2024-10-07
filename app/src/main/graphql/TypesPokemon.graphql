@@ -1,0 +1,10 @@
+query TypesPokemon($offset: Int, $limit: Int) {
+    pokemons(limit: $limit, offset: $offset) {
+        results {
+            id
+            image
+            name
+            url
+        }
+    }
+}

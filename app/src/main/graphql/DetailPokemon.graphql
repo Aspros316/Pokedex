@@ -1,0 +1,23 @@
+query DetailPokemon($name: String!) {
+    pokemon(name: $name) {
+        name
+        id
+        abilities {
+            ability {
+                name
+            }
+        }
+        moves {
+            move {
+                name
+            }
+        }
+        types {
+            type {
+                name
+            }
+        }
+        message
+        status
+    }
+}

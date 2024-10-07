@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.pokedex.data.cache.model.PokemonTable
+import com.example.pokedex.data.repository.graphql.PokeApi
 import com.example.pokedex.data.repository.model.RemoteDetailPokemon
 import com.example.pokedex.data.repository.retrofit.PokemonWebService
 import com.example.pokedex.data.source.PokemonCache
@@ -16,14 +17,15 @@ import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
     private val webService: PokemonWebService,
-    private val cache: PokemonCache
+    private val cache: PokemonCache,
+    private val pokeApi: PokeApi,
 ) : PokemonRepository {
 
     override suspend fun getListPokemon(): Flow<PagingData<Pokemon>> {
         return Pager(
             config = PagingConfig(pageSize = 2, enablePlaceholders = false),
             pagingSourceFactory = {
-                PokemonPagingDataSource(webService)
+                PokemonPagingDataSource(pokeApi)
             }
         ).flow
     }

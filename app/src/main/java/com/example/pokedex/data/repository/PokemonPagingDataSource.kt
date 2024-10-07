@@ -3,11 +3,13 @@ package com.example.pokedex.data.repository
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.pokedex.data.repository.retrofit.PokemonWebService
+import com.example.pokedex.data.repository.graphql.PokeApi
 import com.example.pokedex.domain.list.mapper.toDomain
 import com.example.pokedex.domain.model.Pokemon
+import retrofit2.HttpException
+import java.io.IOException
 
-class PokemonPagingDataSource(private val repository: PokemonWebService) :
+class PokemonPagingDataSource(private val pokeApi: PokeApi) :
     PagingSource<Int, Pokemon>() {
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -17,26 +19,24 @@ class PokemonPagingDataSource(private val repository: PokemonWebService) :
     }
 
     override suspend fun load(params: LoadParams<Int>):
-            LoadResult<Int, Pokemon> = try {
-        val position = params.key ?: 0
-        val pageSize = params.loadSize
-        val response = repository.getAllPokemon(position, pageSize)
-        Log.d("Pagination event", "Offset = $position Limit = ${pageSize}")
-        val error = response.errorBody()
-        val data = response.body()
+            LoadResult<Int, Pokemon> {
+        return try {
+                    val position = params.key ?: 0
+                    val pageSize = params.loadSize
+                    val response = pokeApi.getListPokemon(position, pageSize)
+                    Log.d("Pagination event", "Offset = $position Limit = ${pageSize}")
+                    val data = response
 
-        if (error != null) {
-            LoadResult.Error(throw Exception("No Response"))
-        } else if (data != null) {
             LoadResult.Page(
-                data = data.remotePokemonTypes.toDomain(),
+                data = data?.remotePokemonTypes?.toDomain() ?: listOf(),
                 prevKey = if (position < pageSize) null else (position - pageSize),
                 nextKey = if (position >= 1302) null else (position + pageSize)
             )
-        } else {
-            LoadResult.Error(throw Exception("No Response"))
-        }
-    } catch (e: Exception) {
-        LoadResult.Error(e)
-    }
+
+                } catch (exception: IOException) {
+                    return LoadResult.Error(exception)
+                } catch (exception: HttpException) {
+                    return LoadResult.Error(exception)
+                }
+            }
 }

@@ -2,12 +2,23 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias (libs.plugins.hilt.application)
+    alias(libs.plugins.apollo)
     kotlin("kapt")
 }
 
 android {
     namespace = "com.example.pokedex"
     compileSdk = 34
+
+    apollo {
+        service("service") {
+            packageName.set("com.example.rocketreserver")
+            introspection { // highlight-line
+                endpointUrl.set("https://graphql-pokeapi.graphcdn.app/") // highlight-line
+                schemaFile.set(file("src/main/graphql/schema.sdl")) // highlight-line
+            } // highlight-line
+        }
+    }
 
     defaultConfig {
         applicationId = "com.example.pokedex"
@@ -91,6 +102,12 @@ dependencies {
     implementation(libs.room.ktx)
     //noinspection KaptUsageInsteadOfKsp
     kapt (libs.room.compiler)
+
+    // apollo graphgql
+    implementation(libs.apollo.runtime)
+
+    // OkHttp
+    implementation(libs.okhttp.logging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
