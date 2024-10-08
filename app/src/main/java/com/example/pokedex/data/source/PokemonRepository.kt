@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
     suspend fun getListPokemon(): Flow<PagingData<Pokemon>>
-    suspend fun getPokemonDetail(pokemonId: String): RemoteDetailPokemon
+    suspend fun getPokemonDetail(name: String): RemoteDetailPokemon?
     suspend fun savePokemonFavorite(pokemonTable: PokemonTable)
     suspend fun getPokemonFavorite(pokemonId: Int): Flow<PokemonTable>
     suspend fun deletePokemon(pokemonId: Int)

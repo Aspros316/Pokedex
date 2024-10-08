@@ -16,7 +16,6 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
-    private val webService: PokemonWebService,
     private val cache: PokemonCache,
     private val pokeApi: PokeApi,
 ) : PokemonRepository {
@@ -30,8 +29,8 @@ class PokemonRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getPokemonDetail(pokemonId: String): RemoteDetailPokemon =
-        webService.getPokemonDetail(pokemonId)
+    override suspend fun getPokemonDetail(name: String): RemoteDetailPokemon? =
+        pokeApi.getDetailPokemon(name)
 
     override suspend fun savePokemonFavorite(pokemonTable: PokemonTable) = runBlocking {
         cache.savePokemonFavorite(pokemonTable)

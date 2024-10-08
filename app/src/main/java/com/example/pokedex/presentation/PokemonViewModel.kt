@@ -94,9 +94,9 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    fun getPokemonDetail(id: String) {
+    fun getPokemonDetail(name: String) {
         viewModelScope.launch(dispatcher.ioThread) {
-            getPokemonDetailUseCase.execute(id)
+            getPokemonDetailUseCase.execute(name)
                 .map {
                     _detailStateFlow.emit(it)
                 }.stateIn(this)

@@ -1,6 +1,7 @@
 package com.example.pokedex.ui.list
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -158,7 +162,11 @@ fun PokemonText(pokemon: Pokemon) {
 
 @Composable
 fun PokemonCard(navToDetail: (Pokemon)-> Unit, pokemon: Pokemon) {
-    Surface(
+    OutlinedCard(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier
             .padding(8.dp),
         onClick = {
@@ -182,7 +190,7 @@ fun PokemonImage(image: String) {
         contentDescription = null,
         modifier = Modifier
             .background(Color.White)
-            .height(150.dp)
+            .height(200.dp)
             .fillMaxWidth()
     )
 }

@@ -19,5 +19,8 @@ query DetailPokemon($name: String!) {
         }
         message
         status
+        sprites {
+            front_default
+        }
     }
 }
