@@ -182,61 +182,8 @@ fun DetailPokemonContent(
             }
             DetailPokemonImage(detailPokemon.sprite.frontDefault)
         }
-        DisplayListComponent(detailPokemon = detailPokemon)
+        TabListScreen(detailPokemon = detailPokemon)
     }
-}
-
-
-@Composable
-fun DisplayListComponent(
-    detailPokemon: DetailPokemon,
-) {
-
-
-    TabScreen(detailPokemon)
-    /*  Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 24.dp, end = 24.dp),
-    ) {
-
-        }*/
-
-    /*       Text(
-                   text = "Habilidades",
-                   fontWeight = FontWeight.Black,
-                   color = Color.Black,
-                   style = typography.bodyMedium,
-                   textAlign = TextAlign.Center,
-                   modifier = Modifier
-                       .align(alignment = Alignment.CenterHorizontally),
-               )
-
-               Spacer(modifier = Modifier.size(8.dp))
-
-               LazyColumn(
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .background(Color.White),
-
-                   ) {
-                   items(abilities) { abilitie ->
-                       Card(
-                           modifier = Modifier
-                               .fillMaxWidth()
-                               .padding(top = 8.dp),
-                       ) {
-                           Text(
-                               modifier = Modifier.padding(16.dp),
-                               text = abilitie.ability.name,
-                               fontWeight = FontWeight.Black,
-                               color = Color.Black,
-                           )
-                       }
-                   }
-               }*/
-
-
 }
 
 
@@ -254,11 +201,10 @@ fun ToggleHeart(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
 }
 
 @Composable
-fun TabScreen(
+fun TabListScreen(
     detailPokemon: DetailPokemon
 ) {
     var tabIndex by remember { mutableStateOf(0) }
-
     val tabs = listOf("Habilidades", "Tipos de habilidades", "Movimientos")
 
     Column(modifier = Modifier.fillMaxWidth()) {
