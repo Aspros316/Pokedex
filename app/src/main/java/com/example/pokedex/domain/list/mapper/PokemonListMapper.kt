@@ -8,6 +8,9 @@ fun List<RemotePokemon>.toDomain() = map { listPokemon ->
 }
 
 private fun RemotePokemon.toPokemon() = Pokemon(
+    id = id ?: 0 ,
     name = name.orEmpty(),
-    url = url.orEmpty()
+    image = image.orEmpty(),
+    url = url.orEmpty(),
+    artwork = artwork.orEmpty()
 )

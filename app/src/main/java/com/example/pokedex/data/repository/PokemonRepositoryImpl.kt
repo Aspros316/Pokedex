@@ -60,4 +60,20 @@ class PokemonRepositoryImpl @Inject constructor(
     override suspend fun clearDatastore() {
         cache.clearDataStore()
     }
+
+    override suspend fun saveUseTime(useTime: Long) = runBlocking {
+        cache.saveUseTime(useTime)
+    }
+    override suspend fun getUseTime(): Flow<Long> = runBlocking {
+       cache.getUseTime()
+    }
+
+    override suspend fun savePokemonSeen(newSeen: Int) = runBlocking {
+        cache.savePokemonSeen(newSeen)
+    }
+
+    override suspend fun getPokemonSeen(): Flow<Int> = runBlocking {
+        cache.getPokemonSeen()
+    }
+
 }

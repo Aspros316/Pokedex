@@ -1,12 +1,11 @@
 package com.example.pokedex.presentation
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.pokedex.data.cache.model.PokemonTable
+import com.example.pokedex.data.source.PokemonRepository
 import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
 import com.example.pokedex.domain.favorite.GetAllPokemonFavoriteUseCase
@@ -24,6 +23,7 @@ import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.sealed.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -42,8 +42,9 @@ class PokemonViewModel @Inject constructor(
     private val savePokemonSignUpUseCase: SavePokemonSignUpUseCase,
     private val getPokemonSignUpUseCase: GetPokemonSignUpUseCase,
     private val clearDatastoreUseCase: ClearDatastoreUseCase,
-    private val dispatcher: ExecutionThread
-) : ViewModel() {
+    private val dispatcher: ExecutionThread,
+    private val pokemonRepository: PokemonRepository
+    ) : ViewModel() {
 
     private val _pokemonListState: MutableStateFlow<PagingData<Pokemon>> =
         MutableStateFlow(value = PagingData.empty())
@@ -64,6 +65,13 @@ class PokemonViewModel @Inject constructor(
     private val _getSignUpFlow: MutableStateFlow<SignUpCredentials> =
         MutableStateFlow(SignUpCredentials())
     val getSignUpFlow = _getSignUpFlow.asStateFlow()
+
+    private val _useTime = MutableStateFlow(0L)
+    val useTime: StateFlow<Long> = _useTime.asStateFlow()
+
+    private val _pokemonSeen = MutableStateFlow(0)
+    val pokemonSeen: StateFlow<Int> = _pokemonSeen.asStateFlow()
+
 
     init {
         getSignUp()
@@ -88,7 +96,6 @@ class PokemonViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .cachedIn(viewModelScope)
                 .map {
-                    println("viewmodelValue ${it}")
                     _pokemonListState.value = it
                 }.stateIn(this)
         }
@@ -148,6 +155,34 @@ class PokemonViewModel @Inject constructor(
     fun clearDatastore() {
         viewModelScope.launch(dispatcher.ioThread) {
             clearDatastoreUseCase.execute()
+        }
+    }
+
+    fun saveUseTime(useTime: Long) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.saveUseTime(useTime)
+        }
+    }
+
+    fun getUseTime() {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.getUseTime().map { useTime ->
+                _useTime.value = useTime
+            }.stateIn(this)
+        }
+    }
+
+    fun savePokemonSeen(seen: Int) {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.savePokemonSeen(seen)
+        }
+    }
+
+    fun getPokemonSeen  () {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.getPokemonSeen().map { pokemonSeen ->
+                _pokemonSeen.value = pokemonSeen
+            }.stateIn(this)
         }
     }
 

@@ -4,6 +4,7 @@ plugins {
     alias (libs.plugins.hilt.application)
     alias(libs.plugins.apollo)
     kotlin("kapt")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -78,6 +79,9 @@ dependencies {
     //datastore
     implementation (libs.datastore)
     implementation (libs.datastore.core)
+
+    //firebase
+    implementation(libs.firebase.analytics)
 
     //hilt
     implementation (libs.hilt.android)

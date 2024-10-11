@@ -5,6 +5,7 @@ query TypesPokemon($offset: Int, $limit: Int) {
             image
             name
             url
+            artwork
         }
     }
 }

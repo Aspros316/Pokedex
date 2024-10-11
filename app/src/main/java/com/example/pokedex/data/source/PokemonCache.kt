@@ -12,5 +12,8 @@ interface PokemonCache {
     suspend fun saveSignUp(username: String, password: String, isValid: Boolean)
     fun getSignUp(): Flow<SignUpCredentials>
     suspend fun clearDataStore()
-
+    suspend fun saveUseTime(useTime: Long)
+    suspend fun getUseTime(): Flow<Long>
+    suspend fun savePokemonSeen(newSeen: Int)
+    suspend fun getPokemonSeen(): Flow<Int>
 }

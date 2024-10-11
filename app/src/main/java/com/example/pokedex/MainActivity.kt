@@ -1,48 +1,51 @@
 package com.example.pokedex
 
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.navigation.NavGraph
 import com.example.pokedex.ui.theme.PokedexTheme
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var analytics: FirebaseAnalytics
+    private lateinit var viewModel: PokemonViewModel
+    private var starTime: Long = 0L
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        analytics = Firebase.analytics
         enableEdgeToEdge()
         setContent {
             PokedexTheme {
-                val viewModel = hiltViewModel<PokemonViewModel>()
+                viewModel = hiltViewModel<PokemonViewModel>()
                 val navController = rememberNavController()
-                NavGraph(navController, viewModel)
+                NavGraph(navController, viewModel, analytics)
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onStart() {
+        super.onStart()
+        starTime = SystemClock.elapsedRealtime()
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PokedexTheme {
-        Greeting("Android")
+    override fun onStop() {
+        super.onStop()
+        val useTime = SystemClock.elapsedRealtime() - starTime
+        println("useTime: ${useTime}")
+        viewModel.saveUseTime(useTime)
     }
 }

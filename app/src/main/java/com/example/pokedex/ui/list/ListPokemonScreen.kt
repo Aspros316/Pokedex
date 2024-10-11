@@ -38,14 +38,20 @@ import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.ErrorState
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.navigation.AppScreen
+import com.example.pokedex.ui.navigation.trackScreen
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 
 @Composable
 fun ListPokemonScreen(
+    analytics: FirebaseAnalytics,
     navController: NavHostController,
     navToDetail: (Pokemon)-> Unit,
     viewModel: PokemonViewModel,
     logoutClick: () -> Unit,
 ) {
+    trackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -67,6 +73,7 @@ fun ListPokemonScreen(
 
     ) { innerPadding ->
         ListContent(
+            analytics = analytics,
             navToDetail = navToDetail,
             viewModel = viewModel,
             modifier = Modifier.padding(innerPadding)
@@ -76,6 +83,7 @@ fun ListPokemonScreen(
 
 @Composable
 private fun ListContent(
+    analytics: FirebaseAnalytics,
     navToDetail: (Pokemon)-> Unit,
     viewModel: PokemonViewModel,
     modifier: Modifier = Modifier
@@ -95,7 +103,7 @@ private fun ListContent(
         items(pokemonPage.itemCount) { index ->
             val item = pokemonPage[index]
             if (item != null) {
-                PokemonCard(navToDetail, item)
+                PokemonCard(analytics,navToDetail, item)
                 PokemonText(item)
             }
         }
@@ -161,7 +169,10 @@ fun PokemonText(pokemon: Pokemon) {
 
 
 @Composable
-fun PokemonCard(navToDetail: (Pokemon)-> Unit, pokemon: Pokemon) {
+fun PokemonCard(
+    analytics: FirebaseAnalytics,
+    navToDetail: (Pokemon)-> Unit, pokemon: Pokemon
+) {
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -171,13 +182,17 @@ fun PokemonCard(navToDetail: (Pokemon)-> Unit, pokemon: Pokemon) {
             .padding(8.dp),
         onClick = {
             navToDetail(pokemon)
+            analytics.logEvent("Ir a detalles") {
+                param("id", "${pokemon.id}")
+                param("name", pokemon.name)
+            }
         },
         shape = RoundedCornerShape(5.dp)
     ) {
         Column(
             modifier = Modifier,
         ) {
-            PokemonImage(pokemon.getImageUrl())
+            PokemonImage(pokemon.artwork)
         }
     }
 }

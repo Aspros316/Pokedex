@@ -36,7 +36,22 @@ class PokemonCacheImpl @Inject constructor(
     override fun getSignUp(): Flow<SignUpCredentials> =
         dataStore.getSignUp()
 
+
     override suspend fun clearDataStore() {
         dataStore.clearDatastore()
     }
+
+    override suspend fun saveUseTime(useTime: Long) {
+        dataStore.saveUseTime(useTime)
+    }
+
+    override suspend fun getUseTime(): Flow<Long>  =
+        dataStore.getUseTime()
+
+    override suspend fun savePokemonSeen(newSeen: Int) {
+        dataStore.savePokemonSeen(newSeen)
+    }
+
+    override suspend fun getPokemonSeen(): Flow<Int> =
+        dataStore.getPokemonSeen()
 }

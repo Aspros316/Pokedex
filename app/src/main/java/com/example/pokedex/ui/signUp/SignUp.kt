@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,9 +31,12 @@ import com.example.pokedex.ui.component.PasswordTextField
 import com.example.pokedex.ui.component.PokemonButton
 import com.example.pokedex.ui.component.PokemonTextField
 import com.example.pokedex.ui.model.SignUpCredentials
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 
 @Composable
 fun SignIn(
+    analytics: FirebaseAnalytics,
     onNavigateToSignUp: () -> Unit,
     signInRequest: (SignUpCredentials) -> Unit,
 ) {
@@ -100,12 +104,19 @@ fun SignIn(
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             ) {
+
                 PokemonButton(
                     isEnable = if (userInput.isNotEmpty() && passwordInput.isNotEmpty()) true else false,
                     onClick = {
+                        analytics.logEvent("Registrando usuario") {
+                            param("valor1", "No tiene cuenta")
+                            param("valor2", "Registro de nuevo usuario")
+
+                        }
                         signInRequest(
                             SignUpCredentials(userInput, passwordInput, true)
                         )
+
                     },
                     txtButton = "Iniciar sesión",
                     modifier = Modifier
@@ -115,35 +126,35 @@ fun SignIn(
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-            ) {
-/*                Row(
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp,
-                            end = 16.dp
-                        )
-                ) {
-                    NormalText(
-                        text = "¿No tienes cuenta?",
-                        color = Color.Black,
-                        modifier = Modifier,
-                        font = 19
-                    )
-                    NormalText(
-                        text = "Crear cuenta",
-                        color = colorResource(id = R.color.light_orange),
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickable {
-                                onNavigateToSignUp()
-                            },
-                        font = 19
-                    )
-                }*/
-            }
+            /*  Box(
+                  modifier = Modifier
+                      .padding(bottom = 16.dp)
+              ) {
+                  Row(
+                      modifier = Modifier
+                          .padding(
+                              top = 16.dp,
+                              end = 16.dp
+                          )
+                  ) {
+                      NormalText(
+                          text = "¿No tienes cuenta?",
+                          color = Color.Black,
+                          modifier = Modifier,
+                          font = 19
+                      )
+                      NormalText(
+                          text = "Crear cuenta",
+                          color = colorResource(id = R.color.light_orange),
+                          modifier = Modifier
+                              .padding(start = 8.dp)
+                              .clickable {
+                                  onNavigateToSignUp()
+                              },
+                          font = 19
+                      )
+                  }
+              }*/
         }
     }
 }

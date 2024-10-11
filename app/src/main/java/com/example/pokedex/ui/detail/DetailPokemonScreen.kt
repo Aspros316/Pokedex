@@ -46,19 +46,25 @@ import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.component.PokemonDetailTitle
+import com.example.pokedex.ui.navigation.trackScreen
 import com.example.pokedex.utils.sealed.Result
 import com.example.pokedex.utils.sealed.Result.OnSuccess
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 
 @Composable
 fun DetailPokemonScreen(
+    analytics: FirebaseAnalytics,
     viewModel: PokemonViewModel,
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
     logoutClick: () -> Unit,
 ) {
-    LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(name) })
 
+    trackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+
+    LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(name) })
     LaunchedEffect(key1 = idPokemon, block = { viewModel.getPokemonFavorite(idPokemon) })
 
     val detailUiState = viewModel.detailStateFlow.collectAsStateWithLifecycle()
@@ -67,6 +73,7 @@ fun DetailPokemonScreen(
         viewModel.getFavoriteFlow.collectAsStateWithLifecycle().value?.isFavorite ?: false
 
     DetailPokemonState(
+        analytics = analytics,
         detailUiState.value,
         navigateUp,
         idPokemon,
@@ -80,6 +87,7 @@ fun DetailPokemonScreen(
 
 @Composable
 fun DetailPokemonState(
+    analytics: FirebaseAnalytics,
     value: Result<DetailPokemon>,
     navigateUp: () -> Unit,
     idPokemon: Int,
@@ -117,6 +125,8 @@ fun DetailPokemonState(
 
             is OnSuccess -> {
                 DetailPokemonContent(
+
+                    analytics = analytics,
                     value.data,
                     modifier = Modifier.padding(innerPadding),
                     name = name,
@@ -134,6 +144,7 @@ fun DetailPokemonState(
 
 @Composable
 fun DetailPokemonContent(
+    analytics: FirebaseAnalytics,
     detailPokemon: DetailPokemon,
     modifier: Modifier,
     name: String,
@@ -165,16 +176,25 @@ fun DetailPokemonContent(
                     checked = selected,
                     onCheckedChange = { favoriteSelected ->
                         if (favoriteSelected) {
+                            viewModel.savePokemonSeen(seen = 1)
                             viewModel.savePokemonFavorite(
                                 PokemonTable(
                                     idPokemon,
                                     name,
                                     true,
-                                    detailPokemon.sprite.frontDefault.toString()
+                                    detailPokemon.sprite.frontDefault
                                 )
                             )
+                            analytics.logEvent("Agregado a Favoritos") {
+                                param("id",  "${idPokemon}")
+                                param("name", name)
+                            }
                         } else {
                             viewModel.deletePokemonFavorite(idPokemon)
+                            analytics.logEvent("Eliminado de Favoritos") {
+                                param("id",  "${idPokemon}")
+                                param("name", name)
+                            }
                         }
                         selected = favoriteSelected
                     }

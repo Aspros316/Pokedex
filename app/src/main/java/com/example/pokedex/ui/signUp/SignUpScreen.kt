@@ -18,14 +18,19 @@ import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.model.SignUpCredentials
 import com.example.pokedex.ui.navigation.AppScreen
+import com.example.pokedex.ui.navigation.trackScreen
+import com.google.firebase.analytics.FirebaseAnalytics
 
 @Composable
 fun SignUpScreen(
+    analytics: FirebaseAnalytics,
     viewModel: PokemonViewModel,
     navController: NavHostController,
     onNavigateToSignUp: () -> Unit,
     signInRequest: (SignUpCredentials) -> Unit,
 ) {
+
+    trackScreen(name = "ingreso a SignUpScreen", analytics = analytics)
 
     val credentials = viewModel.getSignUpFlow.collectAsStateWithLifecycle().value
 
@@ -33,13 +38,14 @@ fun SignUpScreen(
     if (credentials.isValid) {
         navController.navigate(AppScreen.ListScreen.route)
     } else {
-        SignInScreenContent(signInRequest, onNavigateToSignUp)
+        SignInScreenContent(analytics, signInRequest, onNavigateToSignUp)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreenContent(
+    analytics: FirebaseAnalytics,
     signInRequest: (SignUpCredentials) -> Unit,
     onNavigateToSignUp: () -> Unit,
 ) {
@@ -59,7 +65,7 @@ fun SignInScreenContent(
             modifier = Modifier.padding(innerPadding)
         )
         {
-            SignIn(onNavigateToSignUp, signInRequest)
+            SignIn(analytics, onNavigateToSignUp, signInRequest)
         }
     }
 }

@@ -17,5 +17,8 @@ interface PokemonRepository {
     suspend fun saveSignUp(username: String, password: String, isValid: Boolean)
     suspend fun getSignUp(): Flow<SignUpCredentials>
     suspend fun clearDatastore()
-
+    suspend fun saveUseTime(useTime: Long)
+    suspend fun getUseTime(): Flow<Long>
+    suspend fun savePokemonSeen(newSeen: Int)
+    suspend fun getPokemonSeen(): Flow<Int>
 }

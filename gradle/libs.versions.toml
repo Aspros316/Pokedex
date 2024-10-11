@@ -21,6 +21,8 @@ material-icons-extended = "1.6.7"
 datastoreVersion = "1.1.1"
 apollo-version = "4.0.0"
 okhttpVersion = "4.12.0"
+googleGmsGoogleServices = "4.4.2"
+firebaseAnalytics = "22.1.2"
 
 
 [libraries]
@@ -71,6 +73,7 @@ paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pag
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coilVersion" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -78,5 +81,6 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 
 hilt-application = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo-version" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
 

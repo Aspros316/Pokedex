@@ -3,29 +3,29 @@ package com.example.pokedex.ui.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.DisposableEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.activity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import coil.request.Disposable
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.detail.DetailPokemonScreen
 import com.example.pokedex.ui.favorite.FavoritePokemonScreen
-import com.example.pokedex.ui.home.HomePokemonScreen
 import com.example.pokedex.ui.list.ListPokemonScreen
 import com.example.pokedex.ui.model.SignUpCredentials
-import com.example.pokedex.ui.signUp.SignInScreenContent
 import com.example.pokedex.ui.signUp.SignUpScreen
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import java.lang.Thread.sleep
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
-    viewModel: PokemonViewModel
+    viewModel: PokemonViewModel,
+    analytics: FirebaseAnalytics
 ) {
     NavHost(
         navController = navController,
@@ -34,6 +34,7 @@ fun NavGraph(
 
         composable(route = AppScreen.SignUpScreen.route) {
             SignUpScreen(
+                analytics = analytics,
                 viewModel = viewModel,
                 navController = navController,
                 onNavigateToSignUp = {},
@@ -51,6 +52,7 @@ fun NavGraph(
 
         composable(route = AppScreen.ListScreen.route) {
             ListPokemonScreen(
+                analytics = analytics,
                 navController = navController,
                 navToDetail = { pokemon ->
                     navController.navigate(AppScreen.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
@@ -81,6 +83,7 @@ fun NavGraph(
             val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
             val name = backStackEntry.arguments?.getString("name") ?: ""
             DetailPokemonScreen(
+                analytics = analytics,
                 viewModel = viewModel,
                 navigateUp = { navController.navigateUp() },
                 idPokemon = idPokemon,
@@ -95,6 +98,7 @@ fun NavGraph(
 
         composable(route = ConstantAppScreenName.FAVORITE_SCREEN) {
             FavoritePokemonScreen(
+                analytics = analytics,
                 viewModel = viewModel,
                 navController = navController,
                 logoutClick = {
@@ -103,6 +107,17 @@ fun NavGraph(
                     navController.navigate(AppScreen.SignUpScreen.route)
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun trackScreen(name: String, analytics: FirebaseAnalytics){
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, name)
+            }
         }
     }
 }

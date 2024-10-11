@@ -23,7 +23,8 @@ fun TypesPokemonQuery.Pokemons.toRemote()  = RemotePokemonTypes(
             id = 0,
             name = "",
             image = "",
-            url = ""
+            url = "",
+            artwork = ""
         )
     }?: listOf()
 
@@ -33,7 +34,8 @@ fun TypesPokemonQuery.Result.toRemoteListPokemon() = RemotePokemon(
     id = id ?: 0 ,
     name = name.orEmpty(),
     image = image.orEmpty(),
-    url = url.orEmpty()
+    url = url.orEmpty(),
+    artwork = artwork.orEmpty()
 )
 
 

@@ -7,7 +7,7 @@ data class RemotePokemon(
     @SerializedName("name") val name: String?,
     @SerializedName("url") val url: String?,
     @SerializedName("image") val image: String?,
-
-    )
+    @SerializedName("artwork") val artwork: String?
+)
 
 
