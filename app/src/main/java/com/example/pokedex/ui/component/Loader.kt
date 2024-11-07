@@ -48,7 +48,7 @@ fun Loader() {
     CircularProgressIndicator(
         progress = { 1f },
         modifier = Modifier
-            .size(size = 100.dp)
+            .size(size = 60.dp)
             .rotate(degrees = rotateAnimation)
             .border(
                 width = 4.dp,

@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.data.source.PokemonRepository
-import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
+import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.GetAllPokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.GetPokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
@@ -23,8 +24,10 @@ import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.sealed.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -48,7 +51,6 @@ class PokemonViewModel @Inject constructor(
 
     private val _pokemonListState: MutableStateFlow<PagingData<Pokemon>> =
         MutableStateFlow(value = PagingData.empty())
-    val pokemonListState = _pokemonListState.asStateFlow()
 
     private val _detailStateFlow: MutableStateFlow<Result<DetailPokemon>> =
         MutableStateFlow(Result.OnLoading())
@@ -71,6 +73,45 @@ class PokemonViewModel @Inject constructor(
 
     private val _pokemonSeen = MutableStateFlow(0)
     val pokemonSeen: StateFlow<Int> = _pokemonSeen.asStateFlow()
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
+
+    //second state the text typed by the user
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
+    val pokemonList = searchText
+        .combine(_pokemonListState) { text, pokemon ->//combine searchText with _contriesList
+            if (text.isBlank()) { //return the entery list of countries if not is typed
+                pokemon
+            }
+            pokemon.filter { pokemon ->// filter and return a list of countries based on the text the user typed
+                pokemon.name.uppercase().contains(text.trim().uppercase())
+            }
+        }.stateIn(//basically convert the Flow returned from combine operator to StateFlow
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),//it will allow the StateFlow survive 5 seconds before it been canceled
+            initialValue = _pokemonListState.value
+        )
+
+    fun onSearchTextChange(text: String) {
+        _searchText.value = text
+        if(_searchText.value.isEmpty()){
+            _isSearching.value = false
+        }
+    }
+
+    fun onToogleSearch() {
+        _isSearching.value = !_isSearching.value
+        if (!_isSearching.value) {
+            onSearchTextChange("")
+        }
+    }
+
+    fun onSearchClear() {
+        _isSearching.value = false
+    }
 
 
     init {
@@ -187,4 +228,3 @@ class PokemonViewModel @Inject constructor(
     }
 
 }
-
