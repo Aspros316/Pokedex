@@ -42,12 +42,11 @@ import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Moves
 import com.example.pokedex.domain.model.Types
 import com.example.pokedex.presentation.PokemonDetailViewModel
-import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.component.PokemonDetailTitle
-import com.example.pokedex.ui.navigation.trackScreen
+import com.example.pokedex.ui.navigation.TrackScreen
 import com.example.pokedex.utils.sealed.Result
 import com.example.pokedex.utils.sealed.Result.OnSuccess
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -63,7 +62,7 @@ fun DetailPokemonScreen(
     logoutClick: () -> Unit,
 ) {
 
-    trackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+    TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
 
     LaunchedEffect(key1 = Unit, block = { viewModel.getPokemonDetail(name) })
     LaunchedEffect(key1 = idPokemon, block = { viewModel.getPokemonFavorite(idPokemon) })

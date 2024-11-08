@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import coil.request.Disposable
 import com.example.pokedex.presentation.PokemonDetailViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.detail.DetailPokemonScreen
@@ -115,7 +114,7 @@ fun NavGraph(
 }
 
 @Composable
-fun trackScreen(name: String, analytics: FirebaseAnalytics){
+fun TrackScreen(name: String, analytics: FirebaseAnalytics){
     DisposableEffect(key1 = Unit) {
         onDispose {
             analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {

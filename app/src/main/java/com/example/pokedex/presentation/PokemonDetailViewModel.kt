@@ -6,10 +6,8 @@ import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.data.source.PokemonRepository
 import com.example.pokedex.domain.detail.GetPokemonDetailUseCase
 import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
-import com.example.pokedex.domain.favorite.GetAllPokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.GetPokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
-import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.utils.network.ExecutionThread
 import com.example.pokedex.utils.sealed.Result

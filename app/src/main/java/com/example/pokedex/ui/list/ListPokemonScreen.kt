@@ -42,7 +42,7 @@ import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.ErrorState
 import com.example.pokedex.ui.component.Loader
-import com.example.pokedex.ui.navigation.trackScreen
+import com.example.pokedex.ui.navigation.TrackScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 
@@ -56,7 +56,7 @@ fun ListPokemonScreen(
     viewModel: PokemonViewModel,
     logoutClick: () -> Unit,
 ) {
-    trackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+    TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
 
 
     //Collecting states from ViewModel

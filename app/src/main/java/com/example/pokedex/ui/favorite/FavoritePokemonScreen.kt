@@ -26,11 +26,10 @@ import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.component.PokemonDetailTitle
-import com.example.pokedex.ui.navigation.trackScreen
+import com.example.pokedex.ui.navigation.TrackScreen
 import com.example.pokedex.utils.transforTime
 import com.google.firebase.analytics.FirebaseAnalytics
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FavoritePokemonScreen(
     analytics: FirebaseAnalytics,
@@ -39,7 +38,7 @@ fun FavoritePokemonScreen(
     logoutClick: () -> Unit,
 ) {
 
-    trackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+    TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
 
     LaunchedEffect(key1 = Unit, block = { viewModel.getAllPokemonFavorite() })
     val favoriteList = viewModel.favoriteAllFlow.collectAsStateWithLifecycle().value

@@ -1,6 +1,5 @@
 package com.example.pokedex.ui.signUp
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,16 +8,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokedex.presentation.PokemonViewModel
-import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.model.SignUpCredentials
 import com.example.pokedex.ui.navigation.AppScreen
-import com.example.pokedex.ui.navigation.trackScreen
+import com.example.pokedex.ui.navigation.TrackScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 
 @Composable
@@ -30,7 +26,7 @@ fun SignUpScreen(
     signInRequest: (SignUpCredentials) -> Unit,
 ) {
 
-    trackScreen(name = "ingreso a SignUpScreen", analytics = analytics)
+    TrackScreen(name = "ingreso a SignUpScreen", analytics = analytics)
 
     val credentials = viewModel.getSignUpFlow.collectAsStateWithLifecycle().value
 
