@@ -41,6 +41,7 @@ import com.example.pokedex.domain.model.Abilities
 import com.example.pokedex.domain.model.DetailPokemon
 import com.example.pokedex.domain.model.Moves
 import com.example.pokedex.domain.model.Types
+import com.example.pokedex.presentation.PokemonDetailViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.Loader
@@ -55,7 +56,7 @@ import com.google.firebase.analytics.logEvent
 @Composable
 fun DetailPokemonScreen(
     analytics: FirebaseAnalytics,
-    viewModel: PokemonViewModel,
+    viewModel: PokemonDetailViewModel,
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
@@ -92,7 +93,7 @@ fun DetailPokemonState(
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
-    viewModel: PokemonViewModel,
+    viewModel: PokemonDetailViewModel,
     isFavorite: Boolean,
     logoutClick: () -> Unit,
 ) {
@@ -149,7 +150,7 @@ fun DetailPokemonContent(
     modifier: Modifier,
     name: String,
     idPokemon: Int,
-    viewModel: PokemonViewModel,
+    viewModel: PokemonDetailViewModel,
     isFavorite: Boolean,
 ) {
     Column(

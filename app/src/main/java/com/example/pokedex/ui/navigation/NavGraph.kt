@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.request.Disposable
+import com.example.pokedex.presentation.PokemonDetailViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.detail.DetailPokemonScreen
 import com.example.pokedex.ui.favorite.FavoritePokemonScreen
@@ -80,11 +82,12 @@ fun NavGraph(
                 )
             }
         ) { backStackEntry ->
+            val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
             val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
             val name = backStackEntry.arguments?.getString("name") ?: ""
             DetailPokemonScreen(
                 analytics = analytics,
-                viewModel = viewModel,
+                viewModel = pokemonDetailViewModel,
                 navigateUp = { navController.navigateUp() },
                 idPokemon = idPokemon,
                 name = name,

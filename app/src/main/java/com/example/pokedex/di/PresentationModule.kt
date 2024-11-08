@@ -2,6 +2,7 @@ package com.example.pokedex.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.pokedex.presentation.PokemonDetailViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import dagger.Binds
 import dagger.Module
@@ -20,7 +21,12 @@ abstract class PresentationModule {
     @Binds
     @IntoMap
     @ViewModelKey(PokemonViewModel::class)
-    abstract fun bindListViewModel(viewModel: PokemonViewModel): ViewModel
+    abstract fun bindPokemonViewModel(viewModel: PokemonViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PokemonDetailViewModel::class)
+    abstract fun bindPokemonDetailViewModel(viewModel: PokemonDetailViewModel): ViewModel
 
     @Binds
     abstract fun bindsViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
