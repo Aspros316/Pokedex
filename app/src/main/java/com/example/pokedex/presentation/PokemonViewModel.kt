@@ -7,10 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.filter
 import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.data.source.PokemonRepository
-import com.example.pokedex.domain.favorite.DeletePokemonFavoriteUseCase
 import com.example.pokedex.domain.favorite.GetAllPokemonFavoriteUseCase
-import com.example.pokedex.domain.favorite.GetPokemonFavoriteUseCase
-import com.example.pokedex.domain.favorite.SavePokemonFavoriteUseCase
 import com.example.pokedex.domain.list.GetListPokemonUseCase
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.signUp.ClearDatastoreUseCase
