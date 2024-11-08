@@ -71,5 +71,4 @@ class PokemonDetailViewModel @Inject constructor(
             deletePokemonFavoriteUseCase.execute(pokemonId)
         }
     }
-
 }
