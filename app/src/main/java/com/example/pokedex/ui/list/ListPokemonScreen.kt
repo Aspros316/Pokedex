@@ -71,7 +71,7 @@ fun ListPokemonScreen(
                 onSearch = viewModel::onSearchTextChange, //the callback to be invoked when the input service triggers the ImeAction.Search action
                 active = isSearching, //whether the user is searching or not
                 onActiveChange = { viewModel.onToogleSearch() }, //the callback to be invoked when this search bar's active state is changed
-                placeholder = { Text(text = "Busca tu pokemon Aqui !") },
+                placeholder = { Text(text = "Busca tu pokemon !") },
                 trailingIcon = {
                     IconButton(
                         onClick = { },

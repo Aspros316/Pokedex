@@ -17,6 +17,7 @@ import com.example.pokedex.ui.detail.DetailPokemonScreen
 import com.example.pokedex.ui.favorite.FavoritePokemonScreen
 import com.example.pokedex.ui.list.ListPokemonScreen
 import com.example.pokedex.ui.model.SignUpCredentials
+import com.example.pokedex.ui.plash.SplashScreen
 import com.example.pokedex.ui.signUp.SignUpScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
@@ -28,9 +29,11 @@ fun NavGraph(
     viewModel: PokemonViewModel,
     analytics: FirebaseAnalytics
 ) {
+    val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
+
     NavHost(
         navController = navController,
-        startDestination = AppScreen.SignUpScreen.route,
+        startDestination = AppScreen.SplashScreen.route,
     ) {
 
         composable(route = AppScreen.SignUpScreen.route) {
@@ -81,7 +84,6 @@ fun NavGraph(
                 )
             }
         ) { backStackEntry ->
-            val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
             val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
             val name = backStackEntry.arguments?.getString("name") ?: ""
             DetailPokemonScreen(
@@ -110,11 +112,22 @@ fun NavGraph(
                 }
             )
         }
+
+        composable(route = AppScreen.SplashScreen.route) {
+            SplashScreen(
+                navigateToSignUp = {
+                    navController.navigate(AppScreen.SignUpScreen.route)
+                }
+            )
+
+        }
+
     }
 }
 
+
 @Composable
-fun TrackScreen(name: String, analytics: FirebaseAnalytics){
+fun TrackScreen(name: String, analytics: FirebaseAnalytics) {
     DisposableEffect(key1 = Unit) {
         onDispose {
             analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {

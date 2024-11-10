@@ -1,7 +1,7 @@
 package com.example.pokedex.ui.navigation
 
 sealed class AppScreen(val route: String) {
-    object WelcomeScreen : AppScreen(ConstantAppScreenName.WELCOME_SCREEN)
+    object SplashScreen : AppScreen(ConstantAppScreenName.SPLASH_SCREEN)
     object SignUpScreen : AppScreen(ConstantAppScreenName.SIGN_UP_SCREEN)
     object ListScreen : AppScreen(ConstantAppScreenName.LIST_SCREEN)
     object DetailsScreen : AppScreen(ConstantAppScreenName.DETAIL_SCREEN)
@@ -15,7 +15,7 @@ sealed interface PokemonUiEvent {
 
 
 object ConstantAppScreenName {
-    const val WELCOME_SCREEN = "welcome_screen"
+    const val SPLASH_SCREEN = "splash_screen"
     const val SIGN_UP_SCREEN = "sign_up_screen"
     const val LIST_SCREEN = "list_screen"
     const val DETAIL_SCREEN = "detail_screen"
