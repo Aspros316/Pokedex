@@ -56,6 +56,9 @@ class PokemonViewModel @Inject constructor(
     private val _pokemonSeen = MutableStateFlow(0)
     val pokemonSeen: StateFlow<Int> = _pokemonSeen.asStateFlow()
 
+    private val _isViewedOnboarding = MutableStateFlow(true)
+    val isViewedOnboarding = _isViewedOnboarding.asStateFlow()
+
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
@@ -160,10 +163,25 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    fun getPokemonSeen  () {
+    fun getPokemonSeen () {
         viewModelScope.launch(dispatcher.ioThread) {
             pokemonRepository.getPokemonSeen().map { pokemonSeen ->
                 _pokemonSeen.value = pokemonSeen
+            }.stateIn(this)
+        }
+    }
+
+    fun storeViewedOnboarding() {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.storeViewedOnboarding()
+        }
+    }
+
+    fun getIsViewedOnboarding () {
+        viewModelScope.launch(dispatcher.ioThread) {
+            pokemonRepository.isViewedOnboarding().map { onboardingSeen ->
+                println("visto ${onboardingSeen}")
+                _isViewedOnboarding.value = onboardingSeen
             }.stateIn(this)
         }
     }

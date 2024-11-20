@@ -1,5 +1,6 @@
 package com.example.pokedex.data.cache.datastore
 
+import android.util.Log
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -21,6 +22,7 @@ class PokemonDataStore @Inject constructor(
     private val isValidCredentialsKey = booleanPreferencesKey(name = IS_VALID_CREDENTIALS)
     private val  useTimeKey = longPreferencesKey(name ="usage_time")
     private val pokemonSeen = intPreferencesKey(name ="pokemon_vistos")
+    private val storeBoard = booleanPreferencesKey(name ="store_board")
 
 
     suspend fun savePokemonSeen(newSeen: Int) {
@@ -82,6 +84,20 @@ class PokemonDataStore @Inject constructor(
             getDataStore.edit { preferences ->
                 preferences.clear()
             }
+        }
+    }
+
+    suspend fun storeViewedOnboarding() {
+        with(pokemonDataStoreBuilder) {
+            getDataStore.edit { preferences ->
+                preferences[storeBoard] = true
+            }
+        }
+    }
+
+    fun isViewedOnboarding(): Flow<Boolean> = with(pokemonDataStoreBuilder) {
+        getDataStore.data.map { preferences ->
+            preferences[storeBoard] ?: false
         }
     }
 

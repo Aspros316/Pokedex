@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,13 +27,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.example.pokedex.R
+import com.example.pokedex.presentation.PokemonViewModel
+import com.example.pokedex.ui.navigation.AppScreen
+import com.example.pokedex.ui.signUp.SignInScreenContent
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
+    viewModel: PokemonViewModel,
+    navController: NavHostController,
     navigateToSignUp: () -> Unit,
-){
+    ){
+    LaunchedEffect(key1 = Unit, block = { viewModel.getIsViewedOnboarding() })
+
+    val isViewedOnboarding = viewModel.isViewedOnboarding.collectAsStateWithLifecycle()
 
     val scale = remember { Animatable(0f) }
     val context = LocalContext.current
@@ -51,7 +62,11 @@ fun SplashScreen(
                 })
         )
         delay(2000L)
-        navigateToSignUp()
+        if (isViewedOnboarding.value) {
+            navController.navigate(AppScreen.SignUpScreen.route)
+        } else {
+            navController.navigate(AppScreen.OnboardingScreen.route)
+        }
     })
 
     Surface(

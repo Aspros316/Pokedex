@@ -6,19 +6,20 @@ import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.data.source.PokemonCache
 import com.example.pokedex.ui.model.SignUpCredentials
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 class PokemonCacheImpl @Inject constructor(
     private val pokemonDao: PokemonDao,
     private val dataStore: PokemonDataStore
-): PokemonCache {
+) : PokemonCache {
 
     override suspend fun savePokemonFavorite(pokemonTable: PokemonTable) {
         return pokemonDao.insertPokemon(pokemonTable)
     }
 
     override suspend fun getPokemonFavorite(pokemonId: Int): Flow<PokemonTable> {
-       return  pokemonDao.getPokemon(pokemonId)
+        return pokemonDao.getPokemon(pokemonId)
     }
 
     override suspend fun deletePokemon(pokemonId: Int) {
@@ -45,7 +46,7 @@ class PokemonCacheImpl @Inject constructor(
         dataStore.saveUseTime(useTime)
     }
 
-    override suspend fun getUseTime(): Flow<Long>  =
+    override suspend fun getUseTime(): Flow<Long> =
         dataStore.getUseTime()
 
     override suspend fun savePokemonSeen(newSeen: Int) {
@@ -54,4 +55,11 @@ class PokemonCacheImpl @Inject constructor(
 
     override suspend fun getPokemonSeen(): Flow<Int> =
         dataStore.getPokemonSeen()
+
+    override fun isViewedOnboarding(): Flow<Boolean> =
+        dataStore.isViewedOnboarding().take(1)
+
+    override suspend fun storeViewedOnboarding() =
+        dataStore.storeViewedOnboarding()
+
 }

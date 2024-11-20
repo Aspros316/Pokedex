@@ -23,6 +23,7 @@ apollo-version = "4.0.0"
 okhttpVersion = "4.12.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAnalytics = "22.1.2"
+lottieCompose = "5.2.0"
 
 
 [libraries]
@@ -56,11 +57,10 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltV
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationVersion" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltVersion" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltVersion" }
-
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
-
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo-version"}
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 
 
 

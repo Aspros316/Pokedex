@@ -96,6 +96,10 @@ dependencies {
     implementation (libs.paging.runtime)
     implementation (libs.paging.compose)
 
+    // lottie
+    implementation(libs.lottie.compose)
+
+
     //coil
     implementation (libs.coil)
 

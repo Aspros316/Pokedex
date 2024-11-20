@@ -16,4 +16,6 @@ interface PokemonCache {
     suspend fun getUseTime(): Flow<Long>
     suspend fun savePokemonSeen(newSeen: Int)
     suspend fun getPokemonSeen(): Flow<Int>
+    fun isViewedOnboarding(): Flow<Boolean>
+    suspend fun storeViewedOnboarding()
 }

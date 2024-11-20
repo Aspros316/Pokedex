@@ -76,4 +76,11 @@ class PokemonRepositoryImpl @Inject constructor(
         cache.getPokemonSeen()
     }
 
+    override suspend fun isViewedOnboarding(): Flow<Boolean> = runBlocking {
+        cache.isViewedOnboarding()
+    }
+    override suspend fun storeViewedOnboarding() = runBlocking {
+        cache.storeViewedOnboarding()
+    }
+
 }

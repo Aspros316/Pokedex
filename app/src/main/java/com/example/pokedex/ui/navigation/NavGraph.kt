@@ -17,6 +17,7 @@ import com.example.pokedex.ui.detail.DetailPokemonScreen
 import com.example.pokedex.ui.favorite.FavoritePokemonScreen
 import com.example.pokedex.ui.list.ListPokemonScreen
 import com.example.pokedex.ui.model.SignUpCredentials
+import com.example.pokedex.ui.onboarding.OnboardingScreen
 import com.example.pokedex.ui.plash.SplashScreen
 import com.example.pokedex.ui.signUp.SignUpScreen
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -29,13 +30,10 @@ fun NavGraph(
     viewModel: PokemonViewModel,
     analytics: FirebaseAnalytics
 ) {
-    val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
-
     NavHost(
         navController = navController,
         startDestination = AppScreen.SplashScreen.route,
     ) {
-
         composable(route = AppScreen.SignUpScreen.route) {
             SignUpScreen(
                 analytics = analytics,
@@ -84,6 +82,7 @@ fun NavGraph(
                 )
             }
         ) { backStackEntry ->
+            val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
             val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
             val name = backStackEntry.arguments?.getString("name") ?: ""
             DetailPokemonScreen(
@@ -115,11 +114,23 @@ fun NavGraph(
 
         composable(route = AppScreen.SplashScreen.route) {
             SplashScreen(
+                viewModel = viewModel,
+                navController = navController,
                 navigateToSignUp = {
-                    navController.navigate(AppScreen.SignUpScreen.route)
+                    navController.navigate(AppScreen.OnboardingScreen.route)
                 }
             )
+        }
 
+        composable(route = AppScreen.OnboardingScreen.route) {
+            OnboardingScreen(
+               navigateNextPage = {
+                   navController.navigate(AppScreen.SignUpScreen.route)
+               },
+                saveOnboarding = {
+                    viewModel.storeViewedOnboarding()
+                }
+            )
         }
 
     }

@@ -21,4 +21,6 @@ interface PokemonRepository {
     suspend fun getUseTime(): Flow<Long>
     suspend fun savePokemonSeen(newSeen: Int)
     suspend fun getPokemonSeen(): Flow<Int>
+    suspend fun isViewedOnboarding(): Flow<Boolean>
+    suspend fun storeViewedOnboarding()
 }
