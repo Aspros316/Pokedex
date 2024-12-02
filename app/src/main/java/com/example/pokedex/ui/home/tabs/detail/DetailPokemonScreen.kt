@@ -1,24 +1,36 @@
-package com.example.pokedex.ui.detail
+package com.example.pokedex.ui.home.tabs.detail
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -31,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -88,7 +101,7 @@ fun DetailPokemonScreen(
 @Composable
 fun DetailPokemonState(
     analytics: FirebaseAnalytics,
-    value: Result<DetailPokemon>,
+    state: Result<DetailPokemon>,
     navigateUp: () -> Unit,
     idPokemon: Int,
     name: String,
@@ -111,7 +124,7 @@ fun DetailPokemonState(
         },
     ) { innerPadding ->
 
-        when (value) {
+        when (state) {
             is Result.OnLoading -> {
                 Column(
                     modifier = Modifier
@@ -127,7 +140,7 @@ fun DetailPokemonState(
                 DetailPokemonContent(
 
                     analytics = analytics,
-                    value.data,
+                    state.data,
                     modifier = Modifier.padding(innerPadding),
                     name = name,
                     idPokemon = idPokemon,
@@ -186,13 +199,13 @@ fun DetailPokemonContent(
                                 )
                             )
                             analytics.logEvent("Agregado a Favoritos") {
-                                param("id",  "${idPokemon}")
+                                param("id", "${idPokemon}")
                                 param("name", name)
                             }
                         } else {
                             viewModel.deletePokemonFavorite(idPokemon)
                             analytics.logEvent("Eliminado de Favoritos") {
-                                param("id",  "${idPokemon}")
+                                param("id", "${idPokemon}")
                                 param("name", name)
                             }
                         }
@@ -220,26 +233,114 @@ fun ToggleHeart(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun TabListScreen(
     detailPokemon: DetailPokemon
 ) {
     var tabIndex by remember { mutableStateOf(0) }
+    var isVisible by remember {
+        mutableStateOf(false)
+    }
+    var iconState by remember {
+        mutableStateOf(Icons.Rounded.KeyboardArrowUp)
+    }
     val tabs = listOf("Habilidades", "Tipos de habilidades", "Movimientos")
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        TabRow(selectedTabIndex = tabIndex) {
-            tabs.forEachIndexed { index, title ->
-                Tab(text = { Text(title, fontSize = 16.sp) },
-                    selected = tabIndex == index,
-                    onClick = { tabIndex = index }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 32.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                .background(MaterialTheme.colorScheme.inverseOnSurface)
+                .animateContentSize()
+        ) {
+
+
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .animateContentSize()
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Box(modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .clickable {
+                        isVisible = !isVisible
+                        iconState = if (isVisible) {
+                            Icons.Rounded.KeyboardArrowUp
+                        } else {
+                            Icons.Rounded.KeyboardArrowDown
+                        }
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(25.dp),
+                        imageVector = iconState,
+                        contentDescription = "Currencies",
+                        tint = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Text(
+                    text = "Currencies",
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    fontWeight = FontWeight.Bold
                 )
+
             }
-        }
-        when (tabIndex) {
-            0 -> ShowAbilities(detailPokemon.abilities)
-            1 -> ShowTypes(detailPokemon.types)
-            2 -> ShoMoves(detailPokemon.moves)
+
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+            )
+
+            if (isVisible) {
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+
+                        TabRow(selectedTabIndex = tabIndex) {
+                            tabs.forEachIndexed { index, title ->
+                                Tab(text = { Text(title, fontSize = 16.sp) },
+                                    selected = tabIndex == index,
+                                    onClick = { tabIndex = index }
+                                )
+                            }
+                        }
+                        when (tabIndex) {
+                            0 -> ShowAbilities(detailPokemon.abilities)
+                            1 -> ShowTypes(detailPokemon.types)
+                            2 -> ShoMoves(detailPokemon.moves)
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -13,9 +13,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokedex.presentation.PokemonDetailViewModel
 import com.example.pokedex.presentation.PokemonViewModel
-import com.example.pokedex.ui.detail.DetailPokemonScreen
-import com.example.pokedex.ui.favorite.FavoritePokemonScreen
-import com.example.pokedex.ui.list.ListPokemonScreen
+import com.example.pokedex.ui.home.tabs.detail.DetailPokemonScreen
+import com.example.pokedex.ui.home.HomePokemonScreen
+import com.example.pokedex.ui.home.tabs.favorite.FavoritePokemonScreen
+import com.example.pokedex.ui.home.tabs.list.ListPokemonScreen
 import com.example.pokedex.ui.model.SignUpCredentials
 import com.example.pokedex.ui.onboarding.OnboardingScreen
 import com.example.pokedex.ui.plash.SplashScreen
@@ -32,9 +33,9 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppScreen.SplashScreen.route,
+        startDestination = Routes.SplashScreen.route,
     ) {
-        composable(route = AppScreen.SignUpScreen.route) {
+        composable(route = Routes.SignUpScreen.route) {
             SignUpScreen(
                 analytics = analytics,
                 viewModel = viewModel,
@@ -46,60 +47,37 @@ fun NavGraph(
                             it.username, it.password, it.isValid
                         )
                     )
-                    navController.navigate(AppScreen.ListScreen.route)
+                    navController.navigate(Routes.HomeScreen.route)
                 }
 
             )
         }
 
-        composable(route = AppScreen.ListScreen.route) {
+        composable(route = Routes.HomeScreen.route) {
+            HomePokemonScreen(
+            )
+        }
+
+       /* composable(route = Routes.ListScreen.route) {
             ListPokemonScreen(
                 analytics = analytics,
                 navController = navController,
                 navToDetail = { pokemon ->
-                    navController.navigate(AppScreen.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
+                    navController.navigate(Routes.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
                 },
                 viewModel = viewModel,
                 logoutClick = {
                     viewModel.clearDatastore()
                     sleep(1000)
-                    navController.navigate(AppScreen.SignUpScreen.route)
+                    navController.navigate(Routes.SignUpScreen.route)
                 }
 
             )
-        }
+        }*/
 
-        composable(route = AppScreen.DetailsScreen.route + "/{id}" + "/?{name}",
-            arguments = listOf(
-                navArgument("id") { type = NavType.IntType },
-                navArgument("name") { type = NavType.StringType },
-            ),
 
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(700)
-                )
-            }
-        ) { backStackEntry ->
-            val pokemonDetailViewModel = hiltViewModel<PokemonDetailViewModel>()
-            val idPokemon = backStackEntry.arguments?.getInt("id") ?: 0
-            val name = backStackEntry.arguments?.getString("name") ?: ""
-            DetailPokemonScreen(
-                analytics = analytics,
-                viewModel = pokemonDetailViewModel,
-                navigateUp = { navController.navigateUp() },
-                idPokemon = idPokemon,
-                name = name,
-                logoutClick = {
-                    viewModel.clearDatastore()
-                    sleep(1000)
-                    navController.navigate(AppScreen.SignUpScreen.route)
-                }
-            )
-        }
 
-        composable(route = ConstantAppScreenName.FAVORITE_SCREEN) {
+       /* composable(route = ConstantAppScreenName.FAVORITE_SCREEN) {
             FavoritePokemonScreen(
                 analytics = analytics,
                 viewModel = viewModel,
@@ -107,25 +85,25 @@ fun NavGraph(
                 logoutClick = {
                     viewModel.clearDatastore()
                     sleep(1000)
-                    navController.navigate(AppScreen.SignUpScreen.route)
+                    navController.navigate(Routes.SignUpScreen.route)
                 }
             )
-        }
+        }*/
 
-        composable(route = AppScreen.SplashScreen.route) {
+        composable(route = Routes.SplashScreen.route) {
             SplashScreen(
                 viewModel = viewModel,
                 navController = navController,
                 navigateToSignUp = {
-                    navController.navigate(AppScreen.OnboardingScreen.route)
+                    navController.navigate(Routes.OnboardingScreen.route)
                 }
             )
         }
 
-        composable(route = AppScreen.OnboardingScreen.route) {
+        composable(route = Routes.OnboardingScreen.route) {
             OnboardingScreen(
                navigateNextPage = {
-                   navController.navigate(AppScreen.SignUpScreen.route)
+                   navController.navigate(Routes.SignUpScreen.route)
                },
                 saveOnboarding = {
                     viewModel.storeViewedOnboarding()

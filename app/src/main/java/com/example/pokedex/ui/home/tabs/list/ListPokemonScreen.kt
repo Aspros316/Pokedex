@@ -1,11 +1,14 @@
-package com.example.pokedex.ui.list
+package com.example.pokedex.ui.home.tabs.list
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,18 +33,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.presentation.PokemonViewModel
-import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.ErrorState
 import com.example.pokedex.ui.component.Loader
+import com.example.pokedex.ui.component.PagingLoadingState
 import com.example.pokedex.ui.navigation.TrackScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
@@ -58,12 +63,19 @@ fun ListPokemonScreen(
 ) {
     TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
 
+    val pokemonPage: LazyPagingItems<Pokemon> =
+        viewModel.pokemonList.collectAsLazyPagingItems()
+
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getListPokemon()
+    })
 
     //Collecting states from ViewModel
     val searchText by viewModel.searchText.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
 
-    Scaffold(modifier = Modifier.fillMaxWidth(),
+    Scaffold(
+        modifier = Modifier.fillMaxWidth(),
         topBar = {
             SearchBar(
                 query = searchText,//text showed on SearchBar
@@ -88,48 +100,23 @@ fun ListPokemonScreen(
                     .padding(8.dp)
                     .fillMaxWidth()
                     .wrapContentHeight()
-
             ) {
                 ListContent(
+                    pokemonPage = pokemonPage,
                     analytics = analytics,
-                    navToDetail = navToDetail,
-                    viewModel = viewModel,
+                    navToDetail = navToDetail
                 )
             }
         },
-        bottomBar = {
-            BottomNavigationBar(
-                bottomNavController = navController,
-                onEvent = viewModel::onEvent,
-                selected = 0
-            )
-        }
-
-    ) {
-
-        /*    innerPadding ->
-        ListContent(
-            analytics = analytics,
-            navToDetail = navToDetail,
-            viewModel = viewModel,
-            modifier = Modifier.padding(innerPadding)
-        )*/
-    }
+    ) {}
 }
 
 @Composable
 private fun ListContent(
+    pokemonPage: LazyPagingItems<Pokemon>,
     analytics: FirebaseAnalytics,
     navToDetail: (Pokemon) -> Unit,
-    viewModel: PokemonViewModel,
 ) {
-    val pokemonPage: LazyPagingItems<Pokemon> =
-        viewModel.pokemonList.collectAsLazyPagingItems()
-
-
-    LaunchedEffect(key1 = Unit, block = {
-        viewModel.getListPokemon()
-    })
 
     LazyColumn(
         modifier = Modifier
@@ -148,15 +135,14 @@ private fun ListContent(
         pokemonPage.apply {
             when {
                 // FIRST LOAD
-                loadState.refresh is LoadState.Loading -> {
+                loadState.refresh is LoadState.Loading && pokemonPage.itemCount == 0 -> {
                     item {
-                        Column(
+                        Box(
                             modifier = Modifier
-                                .fillParentMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Loader()
+                            PagingLoadingState()
                         }
                     }
                 }
@@ -166,11 +152,11 @@ private fun ListContent(
                     item {
                         Column(
                             modifier = Modifier
-                                .fillParentMaxSize(),
+                                .fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Loader()
+                            PagingLoadingState()
                         }
                     }
                 }
@@ -178,14 +164,12 @@ private fun ListContent(
                 // LOADING A NEXT PAGE
                 loadState.append is LoadState.Loading -> {
                     item {
-                        Column(
+                        Box(
                             modifier = Modifier
-                                .fillParentMaxWidth()
-                                .wrapContentHeight(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Loader()
+                            PagingLoadingState()
                         }
                     }
                 }
@@ -193,9 +177,10 @@ private fun ListContent(
                 // GOT AN ERROR AFTER LOADING SOME SUBSEQUENT PAGE
                 loadState.append is LoadState.Error -> {
                     item {
-                        ErrorState()
+                        PagingLoadingState()
                     }
                 }
+
             }
         }
     }
@@ -246,13 +231,17 @@ fun PokemonCard(
 
 @Composable
 fun PokemonImage(image: String) {
-    Image(
-        painter = rememberAsyncImagePainter(image),
-        contentDescription = null,
+
+    SubcomposeAsyncImage(
         modifier = Modifier
             .background(Color.White)
             .height(200.dp)
-            .fillMaxWidth()
-    )
+            .fillMaxWidth(),
+        model = image,
+        contentDescription = null,
+        // contentScale = ContentScale.Crop,
+        loading = { PagingLoadingState() },
+
+        )
 }
 

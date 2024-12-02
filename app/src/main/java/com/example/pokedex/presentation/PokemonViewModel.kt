@@ -14,7 +14,7 @@ import com.example.pokedex.domain.signUp.ClearDatastoreUseCase
 import com.example.pokedex.domain.signUp.GetPokemonSignUpUseCase
 import com.example.pokedex.domain.signUp.SavePokemonSignUpUseCase
 import com.example.pokedex.ui.model.SignUpCredentials
-import com.example.pokedex.ui.navigation.PokemonUiEvent
+import com.example.pokedex.ui.navigation.PokemonBottomUiEvent
 import com.example.pokedex.utils.network.ExecutionThread
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,7 +56,7 @@ class PokemonViewModel @Inject constructor(
     private val _pokemonSeen = MutableStateFlow(0)
     val pokemonSeen: StateFlow<Int> = _pokemonSeen.asStateFlow()
 
-    private val _isViewedOnboarding = MutableStateFlow(true)
+    private val _isViewedOnboarding = MutableStateFlow(false)
     val isViewedOnboarding = _isViewedOnboarding.asStateFlow()
 
     private val _isSearching = MutableStateFlow(false)
@@ -82,9 +82,6 @@ class PokemonViewModel @Inject constructor(
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
-        if(_searchText.value.isEmpty()){
-            _isSearching.value = false
-        }
     }
 
     fun onToogleSearch() {
@@ -98,17 +95,17 @@ class PokemonViewModel @Inject constructor(
         getSignUp()
     }
 
-    fun onEvent(event: PokemonUiEvent) {
+/*    fun onEvent(event: PokemonBottomUiEvent) {
         when (event) {
-            PokemonUiEvent.Navigate -> {
+            PokemonBottomUiEvent.Navigate -> {
                 getListPokemon()
             }
 
-            is PokemonUiEvent.Paginate -> {
+            is PokemonBottomUiEvent.Paginate -> {
                 getAllPokemonFavorite()
             }
         }
-    }
+    }*/
 
     fun getListPokemon() {
         viewModelScope.launch(dispatcher.ioThread) {
@@ -135,7 +132,7 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    fun getSignUp() {
+    private fun getSignUp() {
         viewModelScope.launch(dispatcher.ioThread) {
             getPokemonSignUpUseCase.execute(null).map { credentials ->
                 _getSignUpFlow.value = credentials

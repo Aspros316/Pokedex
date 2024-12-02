@@ -3,6 +3,7 @@ package com.example.pokedex.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSourceFactory
 import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.data.repository.graphql.PokeApi
 import com.example.pokedex.data.repository.model.RemoteDetailPokemon
@@ -18,14 +19,13 @@ import javax.inject.Inject
 class PokemonRepositoryImpl @Inject constructor(
     private val cache: PokemonCache,
     private val pokeApi: PokeApi,
+    private val paging: PokemonPagingDataSource
 ) : PokemonRepository {
 
-    override suspend fun getListPokemon(): Flow<PagingData<Pokemon>> {
+    override  fun getListPokemon(): Flow<PagingData<Pokemon>> {
         return Pager(
-            config = PagingConfig(pageSize = 2, enablePlaceholders = false),
-            pagingSourceFactory = {
-                PokemonPagingDataSource(pokeApi)
-            }
+            config = PagingConfig(pageSize = 20, prefetchDistance = 5, enablePlaceholders = false),
+            pagingSourceFactory = { paging }
         ).flow
     }
 
