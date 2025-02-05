@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pokedex.presentation.PokemonDetailViewModel
+import com.example.pokedex.presentation.PokemonListViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.home.tabs.detail.DetailPokemonScreen
 import com.example.pokedex.ui.home.tabs.favorite.FavoritePokemonScreen
@@ -22,17 +23,17 @@ import java.lang.Thread.sleep
 fun NavBottomGraph(navController: NavHostController) {
     val viewModel = hiltViewModel<PokemonViewModel>()
     val analytics = Firebase.analytics
-
     NavHost(navController = navController, startDestination = Routes.Pokedex.route) {
 
         composable(route = Routes.Pokedex.route){
+            val pokemonListViewModel = hiltViewModel<PokemonListViewModel>()
             ListPokemonScreen(
                 analytics = analytics,
                 navController = navController,
                 navToDetail = { pokemon ->
                     navController.navigate(Routes.DetailsScreen.route + "/${pokemon.getUrlNumber()}" + "/?${pokemon.name}")
                 },
-                viewModel = viewModel,
+                viewModel = pokemonListViewModel,
                 logoutClick = {
                     viewModel.clearDatastore()
                     sleep(1000)

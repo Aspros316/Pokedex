@@ -6,11 +6,12 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.example.pokedex"
-    compileSdk = 34
+    compileSdk = 35
 
     apollo {
         service("service") {

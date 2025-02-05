@@ -1,14 +1,14 @@
 [versions]
-agp = "8.5.1"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+agp = "8.8.0"
+kotlin = "2.1.10"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.6"
-activityCompose = "1.9.2"
-composeBom = "2024.04.01"
-navigationComposeVersion = "2.7.4"
+activityCompose = "1.10.0"
+composeBom = "2025.01.01"
+navigationComposeVersion = "2.8.6"
 hiltVersion = "2.51.1"
 hiltNavigationVersion = "1.2.0"
 retrofitVersion = "2.11.0"
@@ -86,5 +86,5 @@ hilt-application = { id = "com.google.dagger.hilt.android", version.ref = "hiltV
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo-version" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
-
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

@@ -30,7 +30,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonViewModel @Inject constructor(
-    private val getListPokemonUseCase: GetListPokemonUseCase,
     private val getAllPokemonFavoriteUseCase: GetAllPokemonFavoriteUseCase,
     private val savePokemonSignUpUseCase: SavePokemonSignUpUseCase,
     private val getPokemonSignUpUseCase: GetPokemonSignUpUseCase,
@@ -39,8 +38,6 @@ class PokemonViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
     ) : ViewModel() {
 
-    private val _pokemonListState: MutableStateFlow<PagingData<Pokemon>> =
-        MutableStateFlow(value = PagingData.empty())
 
     private val _favoriteAllFlow: MutableStateFlow<List<PokemonTable>> =
         MutableStateFlow(emptyList())
@@ -59,37 +56,6 @@ class PokemonViewModel @Inject constructor(
     private val _isViewedOnboarding = MutableStateFlow(false)
     val isViewedOnboarding = _isViewedOnboarding.asStateFlow()
 
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching = _isSearching.asStateFlow()
-
-    //second state the text typed by the user
-    private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
-
-    val pokemonList = searchText
-        .combine(_pokemonListState) { text, pokemon ->//combine searchText with _contriesList
-            if (text.isBlank()) { //return the entery list of countries if not is typed
-                pokemon
-            }
-            pokemon.filter { pokemon ->// filter and return a list of countries based on the text the user typed
-                pokemon.name.uppercase().contains(text.trim().uppercase())
-            }
-        }.stateIn(//basically convert the Flow returned from combine operator to StateFlow
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),//it will allow the StateFlow survive 5 seconds before it been canceled
-            initialValue = _pokemonListState.value
-        )
-
-    fun onSearchTextChange(text: String) {
-        _searchText.value = text
-    }
-
-    fun onToogleSearch() {
-        _isSearching.value = !_isSearching.value
-        if (!_isSearching.value) {
-            onSearchTextChange("")
-        }
-    }
 
     init {
         getSignUp()
@@ -107,16 +73,7 @@ class PokemonViewModel @Inject constructor(
         }
     }*/
 
-    fun getListPokemon() {
-        viewModelScope.launch(dispatcher.ioThread) {
-            getListPokemonUseCase.execute(Unit)
-                .distinctUntilChanged()
-                .cachedIn(viewModelScope)
-                .map {
-                    _pokemonListState.value = it
-                }.stateIn(this)
-        }
-    }
+
 
     fun getAllPokemonFavorite() {
         viewModelScope.launch(dispatcher.ioThread) {

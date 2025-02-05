@@ -43,10 +43,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.pokedex.domain.model.Pokemon
+import com.example.pokedex.presentation.PokemonListViewModel
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.ErrorState
 import com.example.pokedex.ui.component.Loader
 import com.example.pokedex.ui.component.PagingLoadingState
+import com.example.pokedex.ui.component.PagingType
+import com.example.pokedex.ui.component.PagingWrapper
 import com.example.pokedex.ui.navigation.TrackScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
@@ -58,7 +61,7 @@ fun ListPokemonScreen(
     analytics: FirebaseAnalytics,
     navController: NavHostController,
     navToDetail: (Pokemon) -> Unit,
-    viewModel: PokemonViewModel,
+    viewModel: PokemonListViewModel,
     logoutClick: () -> Unit,
 ) {
     TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
@@ -117,73 +120,29 @@ private fun ListContent(
     analytics: FirebaseAnalytics,
     navToDetail: (Pokemon) -> Unit,
 ) {
+    PagingWrapper(
+        pagingType = PagingType.LAZY_ROW,
+        pagingItems = pokemonPage,
+        initialView = { PagingLoadingState() },
+        itemView = {
+            PokemonItemList(
+                pokemon = it,
+                analytics = analytics
+            ) { characterModel -> navToDetail(characterModel) }
+        },
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(Color(0xFF2B2626))
-    ) {
-        items(pokemonPage.itemCount) { index ->
-            val pokemon = pokemonPage[index]
-            if (pokemon != null) {
-                PokemonText(pokemon)
-                PokemonCard(analytics, navToDetail, pokemon)
-            }
-        }
+        )
+}
 
-        pokemonPage.apply {
-            when {
-                // FIRST LOAD
-                loadState.refresh is LoadState.Loading && pokemonPage.itemCount == 0 -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            PagingLoadingState()
-                        }
-                    }
-                }
+@Composable
+fun PokemonItemList(
+    pokemon: Pokemon,
+    analytics: FirebaseAnalytics,
+    onItemSelected: (Pokemon) -> Unit,
+) {
 
-                // GOT ERROR ON FIRST LOAD
-                loadState.refresh is LoadState.Error -> {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            PagingLoadingState()
-                        }
-                    }
-                }
-
-                // LOADING A NEXT PAGE
-                loadState.append is LoadState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            PagingLoadingState()
-                        }
-                    }
-                }
-
-                // GOT AN ERROR AFTER LOADING SOME SUBSEQUENT PAGE
-                loadState.append is LoadState.Error -> {
-                    item {
-                        PagingLoadingState()
-                    }
-                }
-
-            }
-        }
-    }
+    PokemonText(pokemon)
+    PokemonCard(analytics, onItemSelected, pokemon)
 }
 
 
