@@ -14,7 +14,7 @@ import com.example.pokedex.domain.signUp.ClearDatastoreUseCase
 import com.example.pokedex.domain.signUp.GetPokemonSignUpUseCase
 import com.example.pokedex.domain.signUp.SavePokemonSignUpUseCase
 import com.example.pokedex.ui.model.SignUpCredentials
-import com.example.pokedex.ui.navigation.PokemonUiEvent
+import com.example.pokedex.ui.navigation.PokemonBottomUiEvent
 import com.example.pokedex.utils.network.ExecutionThread
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonViewModel @Inject constructor(
-    private val getListPokemonUseCase: GetListPokemonUseCase,
     private val getAllPokemonFavoriteUseCase: GetAllPokemonFavoriteUseCase,
     private val savePokemonSignUpUseCase: SavePokemonSignUpUseCase,
     private val getPokemonSignUpUseCase: GetPokemonSignUpUseCase,
@@ -39,8 +38,6 @@ class PokemonViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
     ) : ViewModel() {
 
-    private val _pokemonListState: MutableStateFlow<PagingData<Pokemon>> =
-        MutableStateFlow(value = PagingData.empty())
 
     private val _favoriteAllFlow: MutableStateFlow<List<PokemonTable>> =
         MutableStateFlow(emptyList())
@@ -56,70 +53,27 @@ class PokemonViewModel @Inject constructor(
     private val _pokemonSeen = MutableStateFlow(0)
     val pokemonSeen: StateFlow<Int> = _pokemonSeen.asStateFlow()
 
-    private val _isViewedOnboarding = MutableStateFlow(true)
+    private val _isViewedOnboarding = MutableStateFlow(false)
     val isViewedOnboarding = _isViewedOnboarding.asStateFlow()
 
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching = _isSearching.asStateFlow()
-
-    //second state the text typed by the user
-    private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
-
-    val pokemonList = searchText
-        .combine(_pokemonListState) { text, pokemon ->//combine searchText with _contriesList
-            if (text.isBlank()) { //return the entery list of countries if not is typed
-                pokemon
-            }
-            pokemon.filter { pokemon ->// filter and return a list of countries based on the text the user typed
-                pokemon.name.uppercase().contains(text.trim().uppercase())
-            }
-        }.stateIn(//basically convert the Flow returned from combine operator to StateFlow
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),//it will allow the StateFlow survive 5 seconds before it been canceled
-            initialValue = _pokemonListState.value
-        )
-
-    fun onSearchTextChange(text: String) {
-        _searchText.value = text
-        if(_searchText.value.isEmpty()){
-            _isSearching.value = false
-        }
-    }
-
-    fun onToogleSearch() {
-        _isSearching.value = !_isSearching.value
-        if (!_isSearching.value) {
-            onSearchTextChange("")
-        }
-    }
 
     init {
         getSignUp()
     }
 
-    fun onEvent(event: PokemonUiEvent) {
+/*    fun onEvent(event: PokemonBottomUiEvent) {
         when (event) {
-            PokemonUiEvent.Navigate -> {
+            PokemonBottomUiEvent.Navigate -> {
                 getListPokemon()
             }
 
-            is PokemonUiEvent.Paginate -> {
+            is PokemonBottomUiEvent.Paginate -> {
                 getAllPokemonFavorite()
             }
         }
-    }
+    }*/
 
-    fun getListPokemon() {
-        viewModelScope.launch(dispatcher.ioThread) {
-            getListPokemonUseCase.execute(Unit)
-                .distinctUntilChanged()
-                .cachedIn(viewModelScope)
-                .map {
-                    _pokemonListState.value = it
-                }.stateIn(this)
-        }
-    }
+
 
     fun getAllPokemonFavorite() {
         viewModelScope.launch(dispatcher.ioThread) {
@@ -135,7 +89,7 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    fun getSignUp() {
+    private fun getSignUp() {
         viewModelScope.launch(dispatcher.ioThread) {
             getPokemonSignUpUseCase.execute(null).map { credentials ->
                 _getSignUpFlow.value = credentials

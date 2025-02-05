@@ -5,9 +5,9 @@ import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.pokedex.presentation.PokemonViewModel
@@ -42,10 +42,17 @@ class MainActivity : ComponentActivity() {
         starTime = SystemClock.elapsedRealtime()
     }
 
-    override fun onStop() {
-        super.onStop()
-        val useTime = SystemClock.elapsedRealtime() - starTime
-        println("useTime: ${useTime}")
-        viewModel.saveUseTime(useTime)
+    @Composable
+    fun Greetings(name:String){
+        Text(
+            text = "hello $name"
+        )
     }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun GretingsRpreview(){
+        Greetings(name = "marcelo")
+    }
+
 }

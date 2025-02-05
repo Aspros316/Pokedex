@@ -11,71 +11,50 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
-import com.example.pokedex.ui.navigation.AppScreen
-import com.example.pokedex.ui.navigation.PokemonUiEvent
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.pokedex.ui.navigation.BottomBarItem
+import com.example.pokedex.ui.navigation.PokemonBottomUiEvent
+import com.example.pokedex.ui.navigation.Routes
 
 @Composable
 fun BottomNavigationBar(
-    selected: Int,
-    bottomNavController: NavHostController, onEvent: (PokemonUiEvent) -> Unit
+    items: List<BottomBarItem>,
+    navController: NavHostController
 ) {
 
-    val items = listOf(
-        BottomItem(
-            title = "Pokedex",
-            icon = Icons.Rounded.Home
-        ), BottomItem(
-            title = "Favoritos",
-            icon = Icons.Rounded.FavoriteBorder
-        )
-    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
-    val selected = rememberSaveable {
-        mutableIntStateOf(selected)
-    }
+    /* val selected = rememberSaveable {
+         mutableIntStateOf(selected)
+     }*/
 
     NavigationBar {
-        Row(
+     /*   Row(
             modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
-        ) {
-            items.forEachIndexed { index, bottomItem ->
-                NavigationBarItem(selected = selected.intValue == index, onClick = {
-                    selected.intValue = index
-                    when (selected.intValue) {
-                        0 -> {
-                            onEvent(PokemonUiEvent.Navigate)
-                            bottomNavController.popBackStack()
-                            bottomNavController.navigate(AppScreen.ListScreen.route)
-                        }
+        ) {*/
 
-                        1 -> {
-                            onEvent(PokemonUiEvent.Navigate)
-                            bottomNavController.popBackStack()
-                            bottomNavController.navigate(AppScreen.FavoritesScreen.route)
-                        }
-                    }
-                }, icon = {
-                    Icon(
-                        imageVector = bottomItem.icon,
-                        contentDescription = bottomItem.title,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }, label = {
-                    Text(
-                        text = bottomItem.title, color = MaterialTheme.colorScheme.onBackground
-                    )
-                })
+
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = item.icon,
+                    onClick = {},
+                    selected = currentDestination?.hierarchy?.any{ it.route == item.route } == true
+                )
             }
-        }
     }
-
 }
+                    /*label = {
+                        Text(
+                            text = item.title, color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }*/
 
-data class BottomItem(
-    val title: String, val icon: ImageVector
-)

@@ -9,7 +9,6 @@ data class DetailPokemon(
     val moves: List<Moves>,
     val types: List<Types>,
     val sprite: Sprite,
-
     )
 
 fun DetailPokemon?.orEmpty(): DetailPokemon = this ?: DetailPokemon(

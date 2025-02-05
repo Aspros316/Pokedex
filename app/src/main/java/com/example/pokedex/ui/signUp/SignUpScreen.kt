@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.model.SignUpCredentials
-import com.example.pokedex.ui.navigation.AppScreen
+import com.example.pokedex.ui.navigation.Routes
 import com.example.pokedex.ui.navigation.TrackScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 
@@ -32,7 +32,7 @@ fun SignUpScreen(
 
     println("credentials ${credentials}")
     if (credentials.isValid) {
-        navController.navigate(AppScreen.ListScreen.route)
+        navController.navigate(Routes.HomeScreen.route)
     } else {
         SignInScreenContent(analytics, signInRequest, onNavigateToSignUp)
     }

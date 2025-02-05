@@ -1,4 +1,4 @@
-package com.example.pokedex.ui.favorite
+package com.example.pokedex.ui.home.tabs.favorite
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -20,12 +20,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.pokedex.data.cache.model.PokemonTable
 import com.example.pokedex.presentation.PokemonViewModel
 import com.example.pokedex.ui.component.BottomNavigationBar
 import com.example.pokedex.ui.component.DetailPokemonImage
 import com.example.pokedex.ui.component.NavTopBar
 import com.example.pokedex.ui.component.PokemonDetailTitle
+import com.example.pokedex.ui.navigation.BottomBarItem.Favorites
+import com.example.pokedex.ui.navigation.BottomBarItem.Pokedex
 import com.example.pokedex.ui.navigation.TrackScreen
 import com.example.pokedex.utils.transforTime
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -39,6 +42,8 @@ fun FavoritePokemonScreen(
 ) {
 
     TrackScreen(name = "ingreso a LisPokemonScreen", analytics = analytics)
+
+
 
     LaunchedEffect(key1 = Unit, block = { viewModel.getAllPokemonFavorite() })
     val favoriteList = viewModel.favoriteAllFlow.collectAsStateWithLifecycle().value
@@ -68,13 +73,6 @@ fun FavoritePokemonScreen(
 
                 )
         },
-        bottomBar = {
-            BottomNavigationBar(
-                bottomNavController = navController,
-                onEvent = viewModel::onEvent,
-                selected = 1
-            )
-        }
     ) { innerPadding ->
         FavoritePokemonContent(Modifier.padding(innerPadding), favoriteList)
     }

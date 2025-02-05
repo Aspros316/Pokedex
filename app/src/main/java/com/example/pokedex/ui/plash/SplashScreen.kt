@@ -31,8 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.pokedex.R
 import com.example.pokedex.presentation.PokemonViewModel
-import com.example.pokedex.ui.navigation.AppScreen
-import com.example.pokedex.ui.signUp.SignInScreenContent
+import com.example.pokedex.ui.navigation.Routes
 import kotlinx.coroutines.delay
 
 @Composable
@@ -63,9 +62,9 @@ fun SplashScreen(
         )
         delay(2000L)
         if (isViewedOnboarding.value) {
-            navController.navigate(AppScreen.SignUpScreen.route)
+            navController.navigate(Routes.SignUpScreen.route)
         } else {
-            navController.navigate(AppScreen.OnboardingScreen.route)
+            navController.navigate(Routes.OnboardingScreen.route)
         }
     })
 

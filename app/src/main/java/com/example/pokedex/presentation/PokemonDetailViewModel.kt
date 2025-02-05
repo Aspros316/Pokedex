@@ -32,7 +32,6 @@ class PokemonDetailViewModel @Inject constructor(
     private val _detailStateFlow: MutableStateFlow<Result<DetailPokemon>> =
         MutableStateFlow(Result.OnLoading())
     val detailStateFlow = _detailStateFlow.asStateFlow()
-
     private val _getFavoriteFlow: MutableStateFlow<PokemonTable?> =
         MutableStateFlow(null)
     val getFavoriteFlow = _getFavoriteFlow.asStateFlow()

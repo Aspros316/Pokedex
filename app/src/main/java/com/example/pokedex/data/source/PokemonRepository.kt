@@ -8,7 +8,7 @@ import com.example.pokedex.ui.model.SignUpCredentials
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
-    suspend fun getListPokemon(): Flow<PagingData<Pokemon>>
+    fun getListPokemon(): Flow<PagingData<Pokemon>>
     suspend fun getPokemonDetail(name: String): RemoteDetailPokemon?
     suspend fun savePokemonFavorite(pokemonTable: PokemonTable)
     suspend fun getPokemonFavorite(pokemonId: Int): Flow<PokemonTable>

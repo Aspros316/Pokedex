@@ -5,11 +5,13 @@ plugins {
     alias(libs.plugins.apollo)
     kotlin("kapt")
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.example.pokedex"
-    compileSdk = 34
+    compileSdk = 35
 
     apollo {
         service("service") {
@@ -85,6 +87,7 @@ dependencies {
 
     //hilt
     implementation (libs.hilt.android)
+    implementation(libs.firebase.crashlytics)
     kapt (libs.hilt.android.compiler)
     implementation (libs.hilt.navigation.compose)
 
